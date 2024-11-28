@@ -147,7 +147,12 @@ namespace Rss2Pds
 
         public Rss2PdsConfig LogToFile( string filePath )
         {
-            this.LogFile = new FileInfo( filePath );
+            return LogToFile( new FileInfo( filePath ) );
+        }
+
+        public Rss2PdsConfig LogToFile( FileInfo filePath )
+        {
+            this.LogFile = filePath;
             return this;
         }
 

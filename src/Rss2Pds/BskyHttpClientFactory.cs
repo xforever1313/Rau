@@ -94,7 +94,7 @@ namespace Rss2Pds
             {
                 ArgumentNullException.ThrowIfNull( request.RequestUri );
                 request.Headers.UserAgent.Clear();
-                request.Headers.UserAgent.Add( new ProductInfoHeaderValue( "at_shendrick_net_PDS_canary", assemblyVersion?.ToString( 3 ) ) );
+                request.Headers.UserAgent.Add( new ProductInfoHeaderValue( this.config.UserAgentName, this.config.UserAgentVersion?.ToString( 3 ) ) );
 
                 return await base.SendAsync( request, cancellationToken );
             }

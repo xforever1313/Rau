@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Prometheus;
 using Serilog;
+using SethCS.Extensions;
 
 namespace Rss2Pds
 {
@@ -27,14 +28,18 @@ namespace Rss2Pds
     {
         public static int Main( string[] args )
         {
-            Console.WriteLine( $"Version: {typeof( Rss2PdsConfig ).Assembly.GetName()?.Version?.ToString( 3 ) ?? string.Empty}." );
+            Version? version = typeof( Program ).Assembly.GetName()?.Version;
+            Console.WriteLine( $"Version: {version?.ToString( 3 ) ?? string.Empty}." );
 
-            var config = new Rss2PdsConfig();
-            if( config.TryValidate( out string error ) == false )
+            var config = new Rss2PdsConfig( version );
             {
-                Console.WriteLine( "Bot is misconfigured" );
-                Console.WriteLine( error );
-                return 1;
+                List<string> errors = config.TryValidate();
+                if( errors.Any() )
+                {
+                    Console.WriteLine( "Bot is misconfigured." );
+                    Console.WriteLine( errors.ToListString( " - " ) );
+                    return 1;
+                }
             }
 
             Serilog.ILogger? log = null;
@@ -56,23 +61,27 @@ namespace Rss2Pds
                 builder.Host.UseSerilog( log );
                 builder.Services.AddSingleton<IHttpClientFactory>( httpClient );
                 builder.Services.ConfigurePdsServices( config );
-                builder.WebHost.UseUrls( $"http://0.0.0.0:{config.Port}" );
 
                 WebApplication app = builder.Build();
-                app.UseRouting();
+                if( config.MetricsPort is not null )
+                {
+                    builder.WebHost.UseUrls( $"http://0.0.0.0:{config.MetricsPort}" );
 
-                // Per https://learn.microsoft.com/en-us/aspnet/core/diagnostics/asp0014?view=aspnetcore-8.0:
-                // Warnings from this rule can be suppressed if
-                // the target UseEndpoints invocation is invoked without
-                // any mappings as a strategy to organize middleware ordering.
-                #pragma warning disable ASP0014 // Suggest using top level route registrations
-                app.UseEndpoints(
-                    endpoints =>
-                    {
-                        endpoints.MapMetrics( "/Metrics" );
-                    }
-                );
-                #pragma warning restore ASP0014 // Suggest using top level route registrations
+                    app.UseRouting();
+
+                    // Per https://learn.microsoft.com/en-us/aspnet/core/diagnostics/asp0014?view=aspnetcore-8.0:
+                    // Warnings from this rule can be suppressed if
+                    // the target UseEndpoints invocation is invoked without
+                    // any mappings as a strategy to organize middleware ordering.
+                    #pragma warning disable ASP0014 // Suggest using top level route registrations
+                    app.UseEndpoints(
+                        endpoints =>
+                        {
+                            endpoints.MapMetrics( "/Metrics" );
+                        }
+                    );
+                    #pragma warning restore ASP0014 // Suggest using top level route registrations
+                }
 
                 log.Information( "Application Running..." );
 

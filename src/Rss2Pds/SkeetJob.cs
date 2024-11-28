@@ -32,18 +32,18 @@ namespace Rss2Pds
 
         // ---------------- Constructor ----------------
 
-        public SkeetJob( Serilog.ILogger log, Rss2PdsConfig config, IHttpClientFactory httpClient )
+        public SkeetJob( Serilog.ILogger log, RssFeedConfig config, IHttpClientFactory httpClient )
         {
             this.log = log;
 
             var microsoftLogger = new SerilogLoggerFactory( log );
             this.client = new BlueskyClient(
                 httpClient,
-                config.BlueSkyUser,
-                config.BlueSkyPassword,
+                config.Handle,
+                config.Password,
                 new string[] { "en", "en-US" },
                 true,
-                config.Url,
+                config.FeedUrl,
                 microsoftLogger.CreateLogger<BlueskyClient>()
             );
         }

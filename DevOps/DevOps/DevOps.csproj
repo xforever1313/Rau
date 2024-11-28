@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Cake.Frosting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\sethcs\LibSethCS\LibSethCS.csproj" />
+    <ProjectReference Include="..\..\sethcs\Seth.CakeLib\Seth.CakeLib.csproj" />
+  </ItemGroup>
+
+</Project>

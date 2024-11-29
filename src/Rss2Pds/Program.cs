@@ -18,40 +18,78 @@
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Mono.Options;
 using Prometheus;
 using Serilog;
 using SethCS.Extensions;
+using SethCS.IO;
 
 namespace Rss2Pds
 {
-    public class Program
+    internal static class Program
     {
+        private static Version? version = null;
+
+        private static Serilog.ILogger? log = null;
+
         public static int Main( string[] args )
         {
-            Version? version = typeof( Program ).Assembly.GetName()?.Version;
-            Console.WriteLine( $"Version: {version?.ToString( 3 ) ?? string.Empty}." );
-
-            var config = new Rss2PdsConfig( version );
-            {
-                List<string> errors = config.TryValidate();
-                if( errors.Any() )
-                {
-                    Console.WriteLine( "Bot is misconfigured." );
-                    Console.WriteLine( errors.ToListString( " - " ) );
-                    return 1;
-                }
-            }
-
-            Serilog.ILogger? log = null;
-
-            void OnTelegramFailure( Exception e )
-            {
-                log?.Warning( $"Telegram message did not send:{Environment.NewLine}{e}" );
-            }
-
-            using var httpClient = new BskyHttpClientFactory( config );
             try
             {
+                version = typeof( Program ).Assembly.GetName()?.Version;
+
+                var options = new ArgumentParser( args );
+                if( options.ShowHelp )
+                {
+                    Console.WriteLine( nameof( Rss2Pds ) + " - Posts RSS feeds to an AT-Proto PDS" );
+                    options.PrintHelp( Console.Out );
+                    return 0;
+                }
+                else if( options.ShowVersion )
+                {
+                    PrintVersion();
+                    return 0;
+                }
+                else if( options.ShowLicense )
+                {
+                    PrintLicense();
+                    return 0;
+                }
+                else if( options.ShowReadme )
+                {
+                    PrintReadme();
+                    return 0;
+                }
+                else if( options.ShowCredits )
+                {
+                    PrintCredits();
+                    return 0;
+                }
+
+                PrintVersion();
+
+                var config = new Rss2PdsConfig( version );
+                {
+                    List<string> errors = config.TryValidate();
+                    if( errors.Any() )
+                    {
+                        Console.WriteLine( "Bot is misconfigured." );
+                        Console.WriteLine( errors.ToListString( " - " ) );
+                        return 1;
+                    }
+                }
+
+                FileInfo? configFile = options.ConfigFilePath;
+                if( configFile is null )
+                {
+                    Console.WriteLine( "Config file is somehow null" );
+                    return 2;
+                }
+
+                Console.WriteLine( $"Using config file: {configFile.FullName}" );
+
+                using var httpClient = new BskyHttpClientFactory( config );
+            
                 log = HostingExtensions.CreateLog( config, OnTelegramFailure );
 
                 WebApplicationBuilder builder = WebApplication.CreateBuilder( args );
@@ -87,6 +125,12 @@ namespace Rss2Pds
 
                 app.Run();
             }
+            catch( OptionException e )
+            {
+                Console.Error.WriteLine( "Error parsing options:" );
+                Console.Error.WriteLine( e.ToString() );
+                return 3;
+            }
             catch( Exception e )
             {
                 if( log is null )
@@ -98,7 +142,7 @@ namespace Rss2Pds
                 {
                     log.Fatal( "FATAL ERROR:" + Environment.NewLine + e );
                 }
-                return 2;
+                return 100;
             }
             finally
             {
@@ -107,6 +151,40 @@ namespace Rss2Pds
 
             return 0;
 
+        }
+
+        private static void PrintCredits()
+        {
+            string str = AssemblyResourceReader.ReadStringResource(
+                typeof( Program ).Assembly, $"{nameof( Rss2Pds )}.Credits.md"
+            );
+            Console.WriteLine( str );
+        }
+
+        private static void PrintLicense()
+        {
+            string str = AssemblyResourceReader.ReadStringResource(
+                typeof( Program ).Assembly, $"{nameof( Rss2Pds )}.License.md"
+            );
+            Console.WriteLine( str );
+        }
+
+        private static void PrintReadme()
+        {
+            string str = AssemblyResourceReader.ReadStringResource(
+                typeof( Program ).Assembly, $"{nameof( Rss2Pds )}.Readme.md"
+            );
+            Console.WriteLine( str );
+        }
+
+        private static void PrintVersion()
+        {
+            Console.WriteLine( $"Version: {version?.ToString( 3 ) ?? string.Empty}." );
+        }
+
+        private static void OnTelegramFailure( Exception e )
+        {
+            log?.Warning( $"Telegram message did not send:{Environment.NewLine}{e}" );
         }
     }
 }

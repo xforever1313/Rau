@@ -23,7 +23,7 @@ using Serilog.Sinks.Telegram.Alternative;
 
 namespace Rss2Pds
 {
-    public static class HostingExtensions
+    internal static class HostingExtensions
     {
         public static Serilog.ILogger CreateLog(
             Rss2PdsConfig config,

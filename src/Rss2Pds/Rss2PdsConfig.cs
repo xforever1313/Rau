@@ -20,7 +20,7 @@ using System.Reflection;
 
 namespace Rss2Pds
 {
-    public sealed class Rss2PdsConfig
+    public partial sealed class Rss2PdsConfig
     {
         // ---------------- Fields ----------------
 
@@ -142,6 +142,7 @@ namespace Rss2Pds
 
         public Rss2PdsConfig AddFeed( RssFeedConfig feedConfig )
         {
+            this.feeds.Add( feedConfig );
             return this;
         }
 

@@ -20,7 +20,7 @@ using System.Reflection;
 
 namespace Rss2Pds
 {
-    public partial sealed class Rss2PdsConfig
+    public record class Rss2PdsConfig
     {
         // ---------------- Fields ----------------
 
@@ -28,7 +28,7 @@ namespace Rss2Pds
 
         // ---------------- Constructor ----------------
 
-        internal Rss2PdsConfig( Version? assemblyVersion )
+        protected Rss2PdsConfig( Version? assemblyVersion )
         {
             this.feeds = new List<RssFeedConfig>();
 
@@ -127,7 +127,7 @@ namespace Rss2Pds
         /// alerting an admin.  Set to null to not alert (default).
         /// </param>
         public Rss2PdsConfig AddFeed(
-            Uri feedUrl,
+            string feedUrl,
             string handle,
             string password,
             string cronString,
@@ -136,7 +136,7 @@ namespace Rss2Pds
         )
         {
             return AddFeed(
-                new RssFeedConfig( feedUrl, handle, password, cronString, hashTags, alertThreshold )
+                new RssFeedConfig( new Uri( feedUrl ), handle, password, cronString, hashTags, alertThreshold )
             );
         }
 
@@ -177,6 +177,12 @@ namespace Rss2Pds
             this.TelegramBotToken = telegramBotToken;
             this.TelegramChatId = telegramChatId;
 
+            return this;
+        }
+
+        public Rss2PdsConfig UsePdsAt( string url )
+        {
+            this.PdsUrl = new Uri( url );
             return this;
         }
 

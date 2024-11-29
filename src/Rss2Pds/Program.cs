@@ -68,7 +68,16 @@ namespace Rss2Pds
 
                 PrintVersion();
 
-                var config = new Rss2PdsConfig( version );
+                FileInfo? configFile = options.ConfigFilePath;
+                if( configFile is null )
+                {
+                    Console.WriteLine( "Config file is somehow null" );
+                    return 2;
+                }
+                
+                Console.WriteLine( $"Using config file: {configFile.FullName}" );
+
+                Rss2PdsConfig config = GetConfig( configFile );
                 {
                     List<string> errors = config.TryValidate();
                     if( errors.Any() )
@@ -78,15 +87,6 @@ namespace Rss2Pds
                         return 1;
                     }
                 }
-
-                FileInfo? configFile = options.ConfigFilePath;
-                if( configFile is null )
-                {
-                    Console.WriteLine( "Config file is somehow null" );
-                    return 2;
-                }
-
-                Console.WriteLine( $"Using config file: {configFile.FullName}" );
 
                 using var httpClient = new BskyHttpClientFactory( config );
             
@@ -185,6 +185,19 @@ namespace Rss2Pds
         private static void OnTelegramFailure( Exception e )
         {
             log?.Warning( $"Telegram message did not send:{Environment.NewLine}{e}" );
+        }
+
+        private static Rss2PdsConfig GetConfig( FileInfo fileInfo )
+        {
+            ArgumentNullException.ThrowIfNull( version );
+
+            Console.WriteLine( "Compiling Config..." );
+
+            var compiler = new ConfigCompiler( version );
+            Rss2PdsConfig config = compiler.Compile( fileInfo );
+            Console.WriteLine( "Compiling Config... Done!" );
+
+            return config;
         }
     }
 }

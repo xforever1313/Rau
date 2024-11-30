@@ -46,7 +46,7 @@ namespace Rss2Pds
             Type? type = asm.GetType( "Rss2Pds.Config.CompiledConfig" );
             if( type is null )
             {
-                throw new InvalidOperationException(
+                throw new ConfigCompilerException(
                     "Type of Rss2Pds.Config.CompiledConfig not found in dynamic assembly."
                 );
             }
@@ -54,7 +54,7 @@ namespace Rss2Pds
             object? obj = Activator.CreateInstance( type );
             if( obj is null )
             {
-                throw new InvalidOperationException(
+                throw new ConfigCompilerException(
                     "Failed to activate compiled config object."
                 );
             }
@@ -69,7 +69,7 @@ namespace Rss2Pds
 
             if( configObject is null )
             {
-                throw new InvalidOperationException(
+                throw new ConfigCompilerException(
                     "Failed to invoke Build method."
                 );
             }
@@ -115,7 +115,7 @@ namespace Rss2Pds
                     errors.Add( $"{diagnostic.Id}: {diagnostic.GetMessage()}" );
                 }
 
-                throw new ListedValidationException(
+                throw new InvalidConfigurationException(
                     "Errors compiling config file.  Please fix these errors and try again.",
                     errors
                 );

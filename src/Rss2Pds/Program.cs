@@ -88,6 +88,12 @@ namespace Rss2Pds
                     }
                 }
 
+                if( options.CheckConfigOnly )
+                {
+                    Console.WriteLine( "Bot configuration is valid!" );   
+                    return 0;
+                }
+
                 using var httpClient = new BskyHttpClientFactory( config );
             
                 log = HostingExtensions.CreateLog( config, OnTelegramFailure );

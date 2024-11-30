@@ -61,6 +61,11 @@ namespace Rss2Pds
                     "config_file=",
                     "The config file that contains the bot settings.",
                     v => ConfigFilePath = new FileInfo( v )
+                },
+                {
+                    "check_config",
+                    "Checks the configuration and ensures it is valid.  Exits with 0 if valid.",
+                    v => this.CheckConfigOnly = ( v is not null )
                 }
             };
 
@@ -79,8 +84,10 @@ namespace Rss2Pds
 
         public bool ShowCredits { get; private set; }
 
+        public bool CheckConfigOnly { get; private set; }
+        
         public FileInfo? ConfigFilePath { get; private set; }
-
+        
         // ---------------- Methods ----------------
 
         public void PrintHelp( TextWriter writer )

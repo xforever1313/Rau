@@ -24,6 +24,7 @@
 
   <ItemGroup>
 	<ProjectReference Include="..\..\sethcs\LibSethCS\LibSethCS.csproj" />
+	<ProjectReference Include="..\Rss2Pds.Standard\Rau.Standard.csproj" />
   </ItemGroup>
 
     <ItemGroup>

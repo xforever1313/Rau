@@ -11,7 +11,13 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SethCS", "..\sethcs\SethCS\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Seth.Analyzer", "..\sethcs\Seth.Analyzer\Seth.Analyzer.csproj", "{A27D27F7-32E9-4527-9A5B-925AEC10ACBF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rss2Pds", "Rss2Pds\Rss2Pds.csproj", "{E89358DA-E34E-4390-A508-88D2BF66825F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rss2Pds", "Rss2Pds\Rss2Pds.csproj", "{E89358DA-E34E-4390-A508-88D2BF66825F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rau.Standard", "Rss2Pds.Standard\Rau.Standard.csproj", "{D97E203E-13F0-407C-B307-0F7726D7D1A2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{10BB23F1-A7FA-48C4-8395-3D943C1313AF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rau.Plugins.Canary", "Plugins\Rau.Plugins.Canary\Rau.Plugins.Canary.csproj", "{787F2E8E-9FC5-46BE-B5DE-AA585D1FE3BE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,9 +41,20 @@ Global
 		{E89358DA-E34E-4390-A508-88D2BF66825F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E89358DA-E34E-4390-A508-88D2BF66825F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E89358DA-E34E-4390-A508-88D2BF66825F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D97E203E-13F0-407C-B307-0F7726D7D1A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D97E203E-13F0-407C-B307-0F7726D7D1A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D97E203E-13F0-407C-B307-0F7726D7D1A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D97E203E-13F0-407C-B307-0F7726D7D1A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{787F2E8E-9FC5-46BE-B5DE-AA585D1FE3BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{787F2E8E-9FC5-46BE-B5DE-AA585D1FE3BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{787F2E8E-9FC5-46BE-B5DE-AA585D1FE3BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{787F2E8E-9FC5-46BE-B5DE-AA585D1FE3BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{787F2E8E-9FC5-46BE-B5DE-AA585D1FE3BE} = {10BB23F1-A7FA-48C4-8395-3D943C1313AF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EECE224A-4D02-4BDB-BFE9-6ECCDC85A226}

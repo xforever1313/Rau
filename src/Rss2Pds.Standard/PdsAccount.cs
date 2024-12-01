@@ -1,4 +1,4 @@
-//
+﻿//
 // Rau - A bot that reads RSS feeds and posts them to a AT-Proto PDS node
 // Copyright (C) 2024 Seth Hendrick
 // 
@@ -16,4 +16,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-global using Microsoft.VisualStudio.TestTools.UnitTesting;
+namespace Rau.Standard
+{
+    public record class PdsAccount
+    {
+        // ---------------- Constructor ----------------
+
+        /// <summary>
+        /// The user name to login as.
+        /// </summary>
+        public required string UserName { get; init; }
+
+        /// <summary>
+        /// The password to login with.  It is strongly recommended to use app-passwords
+        /// if using blue sky.
+        /// </summary>
+        public required string Password { get; init; }
+
+        /// <summary>
+        /// The URL to the PDS instance.  Defaulted to blue sky's.
+        /// </summary>
+        public required Uri Instance { get; init; } = new Uri( "https://bsky.social" );
+    }
+}

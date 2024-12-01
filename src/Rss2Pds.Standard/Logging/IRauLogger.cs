@@ -1,4 +1,4 @@
-//
+﻿//
 // Rau - A bot that reads RSS feeds and posts them to a AT-Proto PDS node
 // Copyright (C) 2024 Seth Hendrick
 // 
@@ -16,4 +16,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-global using Microsoft.VisualStudio.TestTools.UnitTesting;
+namespace Rau.Standard.Logging
+{
+    /// <summary>
+    /// Wrapper to an actual ILogger instance.
+    /// This exists so plugins don't need to take
+    /// an additional logging dependency, and so we can change
+    /// the back-end logging system without breaking being able to compile.
+    /// </summary>
+    public interface IRauLogger
+    {
+        void Debug( string message );
+
+        void Verbose( string message );
+
+        void Information( string message );
+
+        void Warning( string message );
+
+        void Error( string message );
+
+        void Fatal( string message );
+    }
+}

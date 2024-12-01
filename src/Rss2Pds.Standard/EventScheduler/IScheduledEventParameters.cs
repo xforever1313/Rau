@@ -1,4 +1,4 @@
-//
+﻿//
 // Rau - A bot that reads RSS feeds and posts them to a AT-Proto PDS node
 // Copyright (C) 2024 Seth Hendrick
 // 
@@ -16,4 +16,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-global using Microsoft.VisualStudio.TestTools.UnitTesting;
+namespace Rau.Standard.EventScheduler
+{
+    public interface IScheduledEventParameters
+    {
+        /// <summary>
+        /// API to the Rau system.
+        /// </summary>
+        IRauApi Api { get; }
+
+        /// <summary>
+        /// The time the event actually fired.
+        /// </summary>
+        DateTimeOffset FireTimeUtc { get; }
+
+        /// <summary>
+        /// Returns the cancellation token which will be cancelled when 
+        /// the job cancellation has been requested. 
+        /// </summary>
+        CancellationToken CancellationToken { get; }
+    }
+}

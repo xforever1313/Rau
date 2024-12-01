@@ -1,5 +1,5 @@
 //
-// Rss2Pds - A bot that reads RSS feeds and posts them to a AT-Proto PDS node
+// Rau - A bot that reads RSS feeds and posts them to a AT-Proto PDS node
 // Copyright (C) 2024 Seth Hendrick
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -20,16 +20,15 @@ using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
-using SethCS.Exceptions;
 
-namespace Rss2Pds
+namespace Rau
 {
     internal sealed class ConfigCompiler
     {
         // ---------------- Fields ----------------
 
         private readonly Version assemblyVersion;
-        
+
         // ---------------- Constructor ----------------
 
         public ConfigCompiler( Version assemblyVersion )
@@ -50,7 +49,7 @@ namespace Rss2Pds
                     "Type of Rss2Pds.Config.CompiledConfig not found in dynamic assembly."
                 );
             }
-            
+
             object? obj = Activator.CreateInstance( type );
             if( obj is null )
             {
@@ -58,7 +57,7 @@ namespace Rss2Pds
                     "Failed to activate compiled config object."
                 );
             }
-            
+
             object? configObject = type.InvokeMember(
                 "Build",
                 BindingFlags.Default | BindingFlags.InvokeMethod,
@@ -73,7 +72,7 @@ namespace Rss2Pds
                     "Failed to invoke Build method."
                 );
             }
-            
+
             return (Rss2PdsConfig)configObject;
         }
 
@@ -88,15 +87,15 @@ namespace Rss2Pds
                 .ToList<MetadataReference>();
 
             references.Add( MetadataReference.CreateFromFile( typeof( Uri ).Assembly.Location ) );
-            
+
             SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText( code );
-            
+
             var options = new CSharpCompilationOptions(
                 OutputKind.DynamicallyLinkedLibrary
             )
             {
             };
-            
+
             CSharpCompilation compilation = CSharpCompilation.Create(
                 "ConfigurationAssembly",
                 syntaxTrees: [syntaxTree],
@@ -121,7 +120,7 @@ namespace Rss2Pds
                 );
             }
 
-            ms.Seek(0, SeekOrigin.Begin );
+            ms.Seek( 0, SeekOrigin.Begin );
             return Assembly.Load( ms.ToArray() );
         }
 
@@ -133,6 +132,7 @@ namespace Rss2Pds
 $@"
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Rss2Pds;
 
 namespace Rss2Pds.Config

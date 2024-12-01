@@ -1,5 +1,5 @@
 //
-// Rss2Pds - A bot that reads RSS feeds and posts them to a AT-Proto PDS node
+// Rau - A bot that reads RSS feeds and posts them to a AT-Proto PDS node
 // Copyright (C) 2024 Seth Hendrick
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ using Serilog;
 using SethCS.Extensions;
 using SethCS.IO;
 
-namespace Rss2Pds
+namespace Rau
 {
     internal static class Program
     {
@@ -41,7 +41,7 @@ namespace Rss2Pds
                 var options = new ArgumentParser( args );
                 if( options.ShowHelp )
                 {
-                    Console.WriteLine( nameof( Rss2Pds ) + " - Posts RSS feeds to an AT-Proto PDS" );
+                    Console.WriteLine( nameof( Rau ) + " - Posts RSS feeds to an AT-Proto PDS" );
                     options.PrintHelp( Console.Out );
                     return 0;
                 }
@@ -162,7 +162,7 @@ namespace Rss2Pds
         private static void PrintCredits()
         {
             string str = AssemblyResourceReader.ReadStringResource(
-                typeof( Program ).Assembly, $"{nameof( Rss2Pds )}.Credits.md"
+                typeof( Program ).Assembly, $"{nameof( Rau )}.Credits.md"
             );
             Console.WriteLine( str );
         }
@@ -170,7 +170,7 @@ namespace Rss2Pds
         private static void PrintLicense()
         {
             string str = AssemblyResourceReader.ReadStringResource(
-                typeof( Program ).Assembly, $"{nameof( Rss2Pds )}.License.md"
+                typeof( Program ).Assembly, $"{nameof( Rau )}.License.md"
             );
             Console.WriteLine( str );
         }
@@ -178,7 +178,7 @@ namespace Rss2Pds
         private static void PrintReadme()
         {
             string str = AssemblyResourceReader.ReadStringResource(
-                typeof( Program ).Assembly, $"{nameof( Rss2Pds )}.Readme.md"
+                typeof( Program ).Assembly, $"{nameof( Rau )}.Readme.md"
             );
             Console.WriteLine( str );
         }

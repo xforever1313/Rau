@@ -1,5 +1,5 @@
 //
-// Rss2Pds - A bot that reads RSS feeds and posts them to a AT-Proto PDS node
+// Rau - A bot that reads RSS feeds and posts them to a AT-Proto PDS node
 // Copyright (C) 2024 Seth Hendrick
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -16,9 +16,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-using System.Reflection;
-
-namespace Rss2Pds
+namespace Rau
 {
     public record class Rss2PdsConfig
     {
@@ -48,7 +46,7 @@ namespace Rss2Pds
         /// This is mainly used for logging in case the log has multiple
         /// applications writing to it.
         /// 
-        /// Defaulted to "Rss2Pds".
+        /// Defaulted to "Rau".
         /// </summary>
         public string ApplicationContext { get; set; }
 
@@ -146,6 +144,43 @@ namespace Rss2Pds
             return this;
         }
 
+#if false
+
+        /// <summary>
+        /// Loads a plugin from the given filepath.
+        /// 
+        /// This should be a C# assembly that contains non-abstract classes that implement
+        /// the <see cref="IRss2PdsFeed"/> interface and are marked with the <see cref="RauPluginAttribute"/>
+        /// attribute.
+        /// </summary>
+        /// <param name="assembly">The assembly that contains feed types.</param>
+        public Rss2PdsConfig LoadPlugin( Assembly assembly )
+        {
+            var errors = new List<string>();
+
+            foreach( Type type in assembly.GetTypes() )
+            {
+                RauPluginAttribute? feedType = type.GetCustomAttribute<RauPluginAttribute>();
+                if( feedType is null )
+                {
+                    continue;
+                }
+
+                if( TryLoadFeedType( feedType.FeedTypeId, type, out string errorMessage ) == false )
+                {
+                    errors.Add( errorMessage );
+                }
+            }
+
+            if( errors.Any() )
+            {
+                throw new ListedValidationException( $"Error loading assembly {assembly.FullName}", errors );
+            }
+
+            return this;
+        }
+#endif
+
         public Rss2PdsConfig LogToFile( string filePath )
         {
             return LogToFile( new FileInfo( filePath ) );
@@ -208,5 +243,29 @@ namespace Rss2Pds
 
             return errors;
         }
+
+#if false
+        private bool TryLoadFeedType( string feedTypeId, Type type, out string errorMessage )
+        {
+            if( type.IsAbstract )
+            {
+                errorMessage = $"Type {type.FullName} is abstract, can not use as a feed type implementation.";
+                return false;
+            }
+            else if( type.IsAssignableTo( typeof( IRss2PdsFeed ) ) )
+            {
+                errorMessage = $"Type {type.FullName} can not be assigned to the {nameof( IRss2PdsFeed )} interface.  Please ensure it implements this interface.";
+                return false;
+            }
+            else if( this.feedTypes.ContainsKey( feedTypeId ) )
+            {
+                errorMessage = $"Feed type ID '{feedTypeId}' already exists.  Its possible another plugin loaded a feed type and used the same ID.";
+                return false;
+            }
+
+            errorMessage = "";
+            return true;
+        }
+#endif
     }
 }

@@ -1,4 +1,4 @@
-//
+﻿//
 // Rau - A bot that reads RSS feeds and posts them to a AT-Proto PDS node
 // Copyright (C) 2024 Seth Hendrick
 // 
@@ -16,4 +16,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-global using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Rau.Standard;
+
+namespace Rau.Plugins.Canary
+{
+    public static class IRauApiExtensions
+    {
+        public static CanaryPlugin GetCanaryPlugin( this IRauApi api )
+        {
+            return api.GetPlugin<CanaryPlugin>( CanaryPlugin.PluginGuid );
+        }
+
+        public static void AddCanaryAccount( this IRauApi api, PdsAccount account, PdsPost post, string cronString )
+        {
+            api.GetCanaryPlugin().AccountManager.AddAccount( account, post, cronString );
+        }
+    }
+}

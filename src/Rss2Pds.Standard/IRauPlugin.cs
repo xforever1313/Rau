@@ -1,4 +1,4 @@
-//
+﻿//
 // Rau - A bot that reads RSS feeds and posts them to a AT-Proto PDS node
 // Copyright (C) 2024 Seth Hendrick
 // 
@@ -16,4 +16,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-global using Microsoft.VisualStudio.TestTools.UnitTesting;
+namespace Rau.Standard
+{
+    public interface IRauPlugin : IDisposable
+    {
+        // ---------------- Properties ----------------
+
+        /// <summary>
+        /// The name of the plugin.
+        /// </summary>
+        string PluginName { get; }
+
+        /// <summary>
+        /// The GUID of the plugin.
+        /// </summary>
+        Guid PluginGuid { get; }
+
+        /// <summary>
+        /// The version of the plugin.
+        /// </summary>
+        Version PluginVersion { get; }
+
+        // ---------------- Methods ----------------
+
+        /// <summary>
+        /// Initializes this plugin and passes in the API.
+        /// </summary>
+        void Initialize( IRauApi api );
+    }
+}

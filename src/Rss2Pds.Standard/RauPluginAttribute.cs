@@ -1,4 +1,4 @@
-//
+﻿//
 // Rau - A bot that reads RSS feeds and posts them to a AT-Proto PDS node
 // Copyright (C) 2024 Seth Hendrick
 // 
@@ -16,30 +16,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-using SethCS.Exceptions;
-
-namespace Rau
+namespace Rau.Standard
 {
     /// <summary>
-    /// Exception that is thrown when there's an exception when compiling
-    /// that is probably not the user's fault.
+    /// The attribute that should be used on the class that implements
+    /// <see cref="IRauPlugin"/>.
+    /// 
+    /// The combination of the two will match the plugin ID with the plugin implementation.
     /// </summary>
-    public class ConfigCompilerException : Exception
+    [AttributeUsage( AttributeTargets.Class, AllowMultiple = false )]
+    public class RauPluginAttribute : Attribute
     {
-        public ConfigCompilerException( string message ) :
-            base( message )
+        // ---------------- Constructor ----------------
+
+        /// <param name="pluginId">
+        /// The GUID in string form (can not pass in a GUID at compile time, which attributes require).
+        /// </param>
+        public RauPluginAttribute( string pluginId )
         {
+            this.PluginId = Guid.Parse( pluginId );
         }
-    }
-    
-    /// <summary>
-    /// Exception that is thrown when a user has an invalid configuration.
-    /// </summary>
-    public class InvalidConfigurationException : ListedValidationException
-    {
-        public InvalidConfigurationException( string context, IEnumerable<string> errors ) :
-            base( context, errors )
-        {
-        }
+
+        // ---------------- Properties ----------------
+
+        public Guid PluginId { get; }
     }
 }

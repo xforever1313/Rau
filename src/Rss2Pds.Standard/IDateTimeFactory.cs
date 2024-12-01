@@ -1,4 +1,4 @@
-//
+﻿//
 // Rau - A bot that reads RSS feeds and posts them to a AT-Proto PDS node
 // Copyright (C) 2024 Seth Hendrick
 // 
@@ -16,4 +16,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-global using Microsoft.VisualStudio.TestTools.UnitTesting;
+namespace Rau.Standard
+{
+    public interface IDateTimeFactory
+    {
+        /// <summary>
+        /// Calls <see cref="DateTime.UtcNow"/>
+        /// in production code, or allows one to set this
+        /// in test code.
+        /// </summary>
+        DateTime UtcNow { get; }
+    }
+}

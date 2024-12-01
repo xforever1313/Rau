@@ -1,5 +1,5 @@
 //
-// Rss2Pds - A bot that reads RSS feeds and posts them to a AT-Proto PDS node
+// Rau - A bot that reads RSS feeds and posts them to a AT-Proto PDS node
 // Copyright (C) 2024 Seth Hendrick
 // 
 // This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-namespace Rss2Pds
+namespace Rau
 {
     public sealed record class RssFeedConfig(
         Uri FeedUrl,

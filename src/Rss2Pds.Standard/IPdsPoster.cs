@@ -1,4 +1,4 @@
-//
+﻿//
 // Rau - A bot that reads RSS feeds and posts them to a AT-Proto PDS node
 // Copyright (C) 2024 Seth Hendrick
 // 
@@ -16,4 +16,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-global using Microsoft.VisualStudio.TestTools.UnitTesting;
+namespace Rau.Standard
+{
+    /// <summary>
+    /// Posts to the PDS.
+    /// </summary>
+    public interface IPdsPoster
+    {
+        /// <summary>
+        /// Posts to the PDS, and eventually Blue Sky.
+        /// </summary>
+        /// <param name="account">The account to post as.</param>
+        /// <param name="postContents">The post contents.</param>
+        Task Post( PdsAccount account, PdsPost postContents );
+    }
+}

@@ -1,4 +1,4 @@
-﻿//
+//
 // Rau - A bot that reads RSS feeds and posts them to a AT-Proto PDS node
 // Copyright (C) 2024 Seth Hendrick
 // 
@@ -16,22 +16,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-namespace Rau.Standard
-{
-    public interface IDateTimeFactory
-    {
-        /// <summary>
-        /// Calls <see cref="DateTime.UtcNow"/>
-        /// in production code, or allows one to set this
-        /// in test code.
-        /// </summary>
-        DateTime UtcNow { get; }
+using Rau.Standard;
 
-        /// <summary>
-        /// Calls <see cref="DateTime.Now"/>
-        /// in production code, or allows one to set this
-        /// in test code.
-        /// </summary>
-        DateTime Now { get; }
+namespace Rau
+{
+    internal sealed class RauDateTimeFactory : IDateTimeFactory
+    {
+        // ---------------- Constructor ----------------
+
+        public RauDateTimeFactory()
+        {
+        }
+        
+        // ---------------- Properties ----------------
+        
+        public DateTime UtcNow => DateTime.UtcNow;
+        
+        public DateTime Now => DateTime.Now;
     }
 }

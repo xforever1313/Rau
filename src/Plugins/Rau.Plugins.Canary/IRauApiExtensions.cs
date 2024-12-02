@@ -39,7 +39,7 @@ namespace Rau.Plugins.Canary
         
         public static void AddCanaryAccountWithDefaultMessage( this IRauApi api, PdsAccount account, string cronString )
         {
-            api.AddCanaryAccount( account, () => CanaryPlugin.DefaultPost(account), cronString );
+            api.AddCanaryAccount( account, () => CanaryPlugin.DefaultPost( api.DateTime, account ), cronString );
         }
     }
 }

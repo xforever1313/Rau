@@ -27,6 +27,13 @@
 	<ProjectReference Include="..\Rss2Pds.Standard\Rau.Standard.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+	<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+	  <_Parameter1>Rau.Tests</_Parameter1>
+	</AssemblyAttribute>
+  </ItemGroup>
+
+
     <ItemGroup>
 	<EmbeddedResource Include="..\..\Credits.md" Link="Credits.md">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

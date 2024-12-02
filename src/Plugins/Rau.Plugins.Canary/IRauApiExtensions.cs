@@ -31,5 +31,15 @@ namespace Rau.Plugins.Canary
         {
             api.GetCanaryPlugin().AccountManager.AddAccount( account, post, cronString );
         }
+
+        public static void AddCanaryAccount( this IRauApi api, PdsAccount account, Func<PdsPost> post, string cronString )
+        {
+            api.GetCanaryPlugin().AccountManager.AddAccount( account, post, cronString );
+        }
+        
+        public static void AddCanaryAccountWithDefaultMessage( this IRauApi api, PdsAccount account, string cronString )
+        {
+            api.AddCanaryAccount( account, () => CanaryPlugin.DefaultPost(account), cronString );
+        }
     }
 }

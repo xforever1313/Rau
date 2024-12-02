@@ -25,7 +25,7 @@ namespace Rau.Plugins.Canary
     {
         // ---------------- Fields ----------------
 
-        internal const string PluginId = "{C603CF33-1056-4794-BF3D-743200FBB79B}";
+        internal const string PluginId = "C603CF33-1056-4794-BF3D-743200FBB79B";
 
         public static readonly Guid PluginGuid = Guid.Parse( PluginId );
 
@@ -76,6 +76,20 @@ namespace Rau.Plugins.Canary
 
         // ---------------- Methods ----------------
 
+        /// <summary>
+        /// The default post this plugin will produce.
+        /// </summary>
+        public static PdsPost DefaultPost( PdsAccount account )
+        {
+            var uptime = TimeSpan.FromMilliseconds( Environment.TickCount64 );
+            var timeStamp = DateTime.Now;
+            
+            string post = $"Chirp! The PDS at {account.Instance.Host} is still online as of: {timeStamp:dddd, MMMM d yyyy, h:mmtt} server time.{Environment.NewLine}" +
+                          $"Server's been up for {uptime.Days} days, {uptime.Hours} hours. #Uptime";
+
+            return new PdsPost( post );
+        }
+        
         public void Initialize( IRauApi api )
         {
             this.api = api;

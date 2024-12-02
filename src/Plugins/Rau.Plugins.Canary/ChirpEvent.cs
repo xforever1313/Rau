@@ -26,12 +26,12 @@ namespace Rau.Plugins.Canary
         // ---------------- Fields ----------------
 
         private readonly PdsAccount account;
-        private readonly PdsPost post;
+        private readonly Func<PdsPost> post;
         private readonly IPdsPoster poster;
 
         // ---------------- Constructor ----------------
 
-        public ChirpEvent( PdsAccount account, PdsPost post, string cronString, IPdsPoster poster )
+        public ChirpEvent( PdsAccount account, Func<PdsPost> post, string cronString, IPdsPoster poster )
         {
             this.account = account;
             this.post = post;
@@ -49,7 +49,7 @@ namespace Rau.Plugins.Canary
 
         public override async Task ExecuteEvent( IScheduledEventParameters eventParams )
         {
-            await poster.Post( this.account, this.post );
+            await poster.Post( this.account, this.post.Invoke() );
         }
     }
 }

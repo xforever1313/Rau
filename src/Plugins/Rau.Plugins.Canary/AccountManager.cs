@@ -37,7 +37,7 @@ namespace Rau.Plugins.Canary
         }
 
         // ---------------- Methods ----------------
-
+        
         /// <summary>
         /// Adds the account with the given post details.
         /// </summary>
@@ -45,8 +45,25 @@ namespace Rau.Plugins.Canary
         /// How often to post.
         /// </param>
         /// <param name="account">The account that will post.</param>
-        /// <param name="post">What to post.</param>
+        /// <param name="post">
+        /// What to post.  This post will be posted exactly as-is every time.
+        /// </param>
         public void AddAccount( PdsAccount account, PdsPost post, string cronString )
+        {
+            AddAccount( account, () => post, cronString );
+        }
+        
+        /// <summary>
+        /// Adds the account with the given post details.
+        /// </summary>
+        /// <param name="cronString">
+        /// How often to post.
+        /// </param>
+        /// <param name="account">The account that will post.</param>
+        /// <param name="post">
+        /// What to post.  This is a function pointer so it can change dynamically.
+        /// </param>
+        public void AddAccount( PdsAccount account, Func<PdsPost> post, string cronString )
         {
             if( this.accounts.ContainsKey( account ) )
             {

@@ -62,6 +62,11 @@ namespace Rau
         
         // ---------------- Methods ----------------
         
+        // TODO:
+        // - Load Plugins
+        // - Compile Configuration
+        // - Start scheduled events
+        
         public void Dispose()
         {
             foreach( KeyValuePair<Guid, IRauPlugin> plugin in this.plugins.ToArray() )

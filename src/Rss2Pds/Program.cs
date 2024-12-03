@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Mono.Options;
 using Prometheus;
+using Rau.Standard;
 using Serilog;
 using SethCS.Extensions;
 using SethCS.IO;
@@ -77,7 +78,8 @@ namespace Rau
                 
                 Console.WriteLine( $"Using config file: {configFile.FullName}" );
 
-                Rss2PdsConfig config = GetConfig( configFile );
+                ApiBuilder apiBuilder = GetBuilder( configFile );
+                RauConfig config = GetConfig( apiBuilder );
                 {
                     List<string> errors = config.TryValidate();
                     if( errors.Any() )
@@ -94,17 +96,20 @@ namespace Rau
                     return 0;
                 }
 
-                using var httpClient = new BskyHttpClientFactory( config );
-            
                 log = HostingExtensions.CreateLog( config, OnTelegramFailure );
+                
+                using var httpClient = new BskyHttpClientFactory( config );
 
+                using var api = new RauApi( config, httpClient, log );
+                apiBuilder.ConfigureBot( api );
+                
                 WebApplicationBuilder builder = WebApplication.CreateBuilder( args );
 
                 builder.Logging.ClearProviders();
                 builder.Services.AddControllersWithViews();
                 builder.Host.UseSerilog( log );
                 builder.Services.AddSingleton<IHttpClientFactory>( httpClient );
-                builder.Services.ConfigurePdsServices( config );
+                builder.Services.ConfigurePdsServices( api );
 
                 WebApplication app = builder.Build();
                 if( config.MetricsPort is not null )
@@ -193,17 +198,25 @@ namespace Rau
             log?.Warning( $"Telegram message did not send:{Environment.NewLine}{e}" );
         }
 
-        private static Rss2PdsConfig GetConfig( FileInfo fileInfo )
+        private static ApiBuilder GetBuilder( FileInfo fileInfo )
         {
             ArgumentNullException.ThrowIfNull( version );
 
-            Console.WriteLine( "Compiling Config..." );
+            Console.WriteLine( "Compiling API Builder..." );
 
             var compiler = new ConfigCompiler( version );
-            Rss2PdsConfig config = compiler.Compile( fileInfo );
-            Console.WriteLine( "Compiling Config... Done!" );
+            ApiBuilder builder = compiler.Compile( fileInfo );
+            Console.WriteLine( "Compiling API Builder... Done!" );
 
-            return config;
+            return builder;
+        }
+
+        private static RauConfig GetConfig( ApiBuilder builder )
+        {
+            var rauConfigurator = new RauConfigurator( version );
+            builder.ConfigureRauSettings( rauConfigurator );
+
+            return rauConfigurator.Config;
         }
     }
 }

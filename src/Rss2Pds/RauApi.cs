@@ -36,20 +36,26 @@ namespace Rau
         // ---------------- Constructor ----------------
 
         public RauApi(
+            RauConfig config,
+            IHttpClientFactory httpClientFactory,
             Serilog.ILogger log
         )
         {
             this.plugins = new Dictionary<Guid, IRauPlugin>();
             this.Plugins = new ReadOnlyDictionary<Guid, IRauPlugin>( this.plugins );
 
+            this.Config = config;
+            
             this.eventManager = new ScheduledEventManager( this, log );
             this.DateTime = new RauDateTimeFactory();
             this.Logger = new RauLogger( log );
-            this.PdsPoster = new PdsPoster();
+            this.PdsPoster = new PdsPoster( httpClientFactory );
         }
         
         // ---------------- Properties ----------------
 
+        public RauConfig Config { get; private set; }
+        
         public IDateTimeFactory DateTime { get; }
 
         public IScheduledEventManager EventScheduler => this.eventManager;

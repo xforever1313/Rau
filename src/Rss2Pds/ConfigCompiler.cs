@@ -38,15 +38,17 @@ namespace Rau
 
         // ---------------- Methods ----------------
 
-        public Rss2PdsConfig Compile( FileInfo sourceFile )
+        public ApiBuilder Compile( FileInfo sourceFile )
         {
+            const string expectedType = "Rau.Config.CompiledApiBuilder";
+            
             Assembly asm = CompileAsm( sourceFile );
 
-            Type? type = asm.GetType( "Rss2Pds.Config.CompiledConfig" );
+            Type? type = asm.GetType( expectedType );
             if( type is null )
             {
                 throw new ConfigCompilerException(
-                    "Type of Rss2Pds.Config.CompiledConfig not found in dynamic assembly."
+                    $"Type of {expectedType} not found in dynamic assembly."
                 );
             }
 
@@ -58,22 +60,7 @@ namespace Rau
                 );
             }
 
-            object? configObject = type.InvokeMember(
-                "Build",
-                BindingFlags.Default | BindingFlags.InvokeMethod,
-                null,
-                obj,
-                null
-            );
-
-            if( configObject is null )
-            {
-                throw new ConfigCompilerException(
-                    "Failed to invoke Build method."
-                );
-            }
-
-            return (Rss2PdsConfig)configObject;
+            return (ApiBuilder)obj;
         }
 
         private Assembly CompileAsm( FileInfo sourceFile )
@@ -133,22 +120,19 @@ $@"
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Rss2Pds;
+using Rau;
+using Rau.Standard;
 
-namespace Rss2Pds.Config
+namespace Rau.Config
 {{
-    public record class CompiledConfig : Rss2PdsConfig
+    public sealed class CompiledApiBuilder : ApiBuilder
     {{
-        public CompiledConfig() :
-            base( new Version( {this.assemblyVersion.Major}, {this.assemblyVersion.Major}, {this.assemblyVersion.Build} ) )
+        public CompiledApiBuilder() :
+            base()
         {{
         }}
 
-        public Rss2PdsConfig Build()
-        {{
-            {code}
-            return this;
-        }}
+        {code}
     }}
 }}
 ";

@@ -20,24 +20,24 @@ using Rau.Standard;
 
 namespace Rau
 {
-    internal sealed class PdsPoster : IPdsPoster
+    internal sealed class RauConfigurator : IRauConfigurator
     {
-        // ---------------- Fields ---------------- 
-        
-        private readonly IHttpClientFactory httpClientFactory;
-        
-        // ---------------- Constructor ---------------- 
+        // ---------------- Constructor ----------------
 
-        public PdsPoster( IHttpClientFactory httpClientFactory )
+        public RauConfigurator( Version? assemblyVersion )
         {
-            this.httpClientFactory = httpClientFactory;
+            this.Config = new RauConfig( assemblyVersion );
         }
         
-        // ---------------- Methods ----------------
+        // ---------------- Properties ----------------
         
-        public Task Post( PdsAccount account, PdsPost postContents )
+        public RauConfig Config { get; private set; }
+        
+        // ---------------- Methods ----------------
+
+        public void Configure( RauConfig config )
         {
-            throw new NotImplementedException();
+            this.Config = config;
         }
     }
 }

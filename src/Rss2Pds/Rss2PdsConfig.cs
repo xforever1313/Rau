@@ -180,61 +180,8 @@ namespace Rau
             return this;
         }
 #endif
+        
 
-        public Rss2PdsConfig LogToFile( string filePath )
-        {
-            return LogToFile( new FileInfo( filePath ) );
-        }
-
-        public Rss2PdsConfig LogToFile( FileInfo filePath )
-        {
-            this.LogFile = filePath;
-            return this;
-        }
-
-        /// <summary>
-        /// Call this method to enable sending warning or higher
-        /// messages to a Telegram channel.
-        /// </summary>
-        /// <param name="telegramBotToken">
-        /// The Telegram bot token to use.  See more information
-        /// on how to do that:
-        /// https://docs.teleirc.com/en/latest/user/quick-start/#create-a-telegram-bot
-        /// </param>
-        /// <param name="telegramChatId">
-        /// The chat ID of the Telegram chat.
-        /// </param>
-        public Rss2PdsConfig LogMessageToTelegram(
-            string telegramBotToken,
-            string telegramChatId
-        )
-        {
-            this.TelegramBotToken = telegramBotToken;
-            this.TelegramChatId = telegramChatId;
-
-            return this;
-        }
-
-        public Rss2PdsConfig UsePdsAt( string url )
-        {
-            this.PdsUrl = new Uri( url );
-            return this;
-        }
-
-        /// <summary>
-        /// Overrides the default user agent.
-        /// </summary>
-        /// <param name="userAgentName">The agent name.</param>
-        /// <param name="userAgentVersion">
-        /// The version of the agent.  Pass in null to not specify a version.
-        /// </param>
-        public Rss2PdsConfig UseUserAgent( string userAgentName, Version? userAgentVersion )
-        {
-            this.UserAgentName = userAgentName;
-            this.UserAgentVersion = userAgentVersion;
-
-            return this;
-        }
 
         internal List<string> TryValidate()
         {

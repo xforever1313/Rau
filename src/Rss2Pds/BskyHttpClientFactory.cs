@@ -18,27 +18,21 @@
 
 using System.Net;
 using System.Net.Http.Headers;
+using Rau.Standard;
 
 namespace Rau
 {
     internal class BskyHttpClientFactory : IHttpClientFactory, IDisposable
     {
         // ---------------- Fields ----------------
-
-        private static readonly Version? assemblyVersion;
-
+        
         private readonly HttpClient client;
 
         private bool isDisposed;
 
         // ---------------- Constructor ----------------
 
-        static BskyHttpClientFactory()
-        {
-            assemblyVersion = typeof( BskyHttpClientFactory ).Assembly.GetName().Version;
-        }
-
-        public BskyHttpClientFactory( Rss2PdsConfig config )
+        public BskyHttpClientFactory( RauConfig config )
         {
             this.isDisposed = false;
             var handler = new UrlModifyingHandler( config )
@@ -79,11 +73,11 @@ namespace Rau
         {
             // ---------------- Fields ----------------
 
-            private readonly Rss2PdsConfig config;
+            private readonly RauConfig config;
 
             // ---------------- Constructor ----------------
 
-            public UrlModifyingHandler( Rss2PdsConfig config )
+            public UrlModifyingHandler( RauConfig config )
             {
                 this.config = config;
             }

@@ -18,6 +18,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
+using Rau.Standard;
 using Serilog;
 using Serilog.Sinks.Telegram.Alternative;
 
@@ -26,7 +27,7 @@ namespace Rau
     internal static class HostingExtensions
     {
         public static Serilog.ILogger CreateLog(
-            Rss2PdsConfig config,
+            RauConfig config,
             Action<Exception> onTelegramFailure
         )
         {
@@ -61,7 +62,7 @@ namespace Rau
                     botToken: telegramBotToken,
                     chatId: telegramChatId,
                     dateFormat: "dd.MM.yyyy HH:mm:sszzz",
-                    applicationName: config.ApplicationContext,
+                    applicationName: nameof( Rau ),
                     failureCallback: onTelegramFailure
                 );
                 logger.WriteTo.Telegram(
@@ -79,10 +80,10 @@ namespace Rau
 
         public static IServiceCollection ConfigurePdsServices(
             this IServiceCollection services,
-            Rss2PdsConfig config
+            IRauApi api
         )
         {
-            services.AddSingleton<Rss2PdsConfig>( config );
+            services.AddSingleton<IRauApi>( api );
             services.AddQuartz(
                 q =>
                 {

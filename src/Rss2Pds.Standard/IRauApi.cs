@@ -23,10 +23,18 @@ namespace Rau.Standard
 {
     /// <summary>
     /// The main interface into the Rau system.
+    ///
+    /// Plugin writers can write extension methods to this interface
+    /// to allow plugin configuration during the initialize stage.
     /// </summary>
     public interface IRauApi
     {
         // ---------------- Properties ----------------
+
+        /// <summary>
+        /// Global configuration of Rau.
+        /// </summary>
+        RauConfig Config { get; }
 
         /// <summary>
         /// Provides the ability to get the current timestamp of the system.

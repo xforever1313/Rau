@@ -79,8 +79,14 @@ namespace Rau
                 }
                 
                 Console.WriteLine( $"Using config file: {configFile.FullName}" );
+                if( configFile.Exists == false )
+                {
+                    Console.WriteLine( "Config file does not exist." );
+                    return 4;
+                }
+                RauPluginLoader pluginLoader = LoadPlugins( configFile );
 
-                ApiBuilder apiBuilder = GetBuilder( configFile );
+                ApiBuilder apiBuilder = GetBuilder( configFile, pluginLoader.ConfigurationNamespaces );
                 RauConfig config = GetConfig( apiBuilder );
                 {
                     List<string> errors = config.TryValidate();
@@ -200,14 +206,14 @@ namespace Rau
             log?.Warning( $"Telegram message did not send:{Environment.NewLine}{e}" );
         }
 
-        private static ApiBuilder GetBuilder( FileInfo fileInfo )
+        private static ApiBuilder GetBuilder( FileInfo fileInfo, IEnumerable<string> usingStatements )
         {
             ArgumentNullException.ThrowIfNull( version );
 
             Console.WriteLine( "Compiling API Builder..." );
 
             var compiler = new ConfigCompiler( version );
-            ApiBuilder builder = compiler.Compile( fileInfo );
+            ApiBuilder builder = compiler.Compile( fileInfo, usingStatements );
             Console.WriteLine( "Compiling API Builder... Done!" );
 
             return builder;
@@ -219,6 +225,13 @@ namespace Rau
             builder.ConfigureRauSettings( rauConfigurator );
 
             return rauConfigurator.Config;
+        }
+
+        private static RauPluginLoader LoadPlugins( FileInfo configFile )
+        {
+            var pluginLoader = new RauPluginLoader();
+            // TODO: Iterate through plugins
+            return pluginLoader;
         }
     }
 }

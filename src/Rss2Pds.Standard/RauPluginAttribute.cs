@@ -34,11 +34,11 @@ namespace Rau.Standard
         /// </param>
         public RauPluginAttribute( string pluginId )
         {
-            this.PluginId = Guid.Parse( pluginId );
+            this.PluginId = pluginId;
         }
 
         // ---------------- Properties ----------------
 
-        public Guid PluginId { get; }
+        public string PluginId { get; }
     }
 }

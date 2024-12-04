@@ -17,6 +17,7 @@
 //
 
 using System.Reflection;
+using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
@@ -38,11 +39,11 @@ namespace Rau.Configuration
 
         // ---------------- Methods ----------------
 
-        public ApiBuilder Compile( FileInfo sourceFile )
+        public ApiBuilder Compile( FileInfo sourceFile, IEnumerable<string> namespaces )
         {
             const string expectedType = "Rau.Config.CompiledApiBuilder";
             
-            Assembly asm = CompileAsm( sourceFile );
+            Assembly asm = CompileAsm( sourceFile, namespaces );
 
             Type? type = asm.GetType( expectedType );
             if( type is null )
@@ -63,9 +64,9 @@ namespace Rau.Configuration
             return (ApiBuilder)obj;
         }
 
-        private Assembly CompileAsm( FileInfo sourceFile )
+        private Assembly CompileAsm( FileInfo sourceFile, IEnumerable<string> namespaces )
         {
-            string code = GetCode( sourceFile );
+            string code = GetCode( sourceFile, namespaces );
 
             // Taken from https://stackoverflow.com/a/47732064
             Assembly[] refs = AppDomain.CurrentDomain.GetAssemblies();
@@ -111,18 +112,26 @@ namespace Rau.Configuration
             return Assembly.Load( ms.ToArray() );
         }
 
-        private string GetCode( FileInfo sourceFile )
+        private string GetCode( FileInfo sourceFile, IEnumerable<string> namespaces )
         {
+            var namespaceBuilder = new StringBuilder();
+            namespaceBuilder.AppendLine( "using System;" );
+            namespaceBuilder.AppendLine( "using System.Collections.Generic;" );
+            namespaceBuilder.AppendLine( "using System.IO;" );
+            namespaceBuilder.AppendLine( "using Rau;" );
+            namespaceBuilder.AppendLine( "using Rau.Standard;" );
+            namespaceBuilder.AppendLine( "using Rau.Standard.Configuration;" );
+            namespaceBuilder.AppendLine( "using Rau.Standard.EventScheduler;" );
+            namespaceBuilder.AppendLine( "using Rau.Standard.Logging;" );
+            foreach( string ns in namespaces )
+            {
+                namespaceBuilder.AppendLine( ns );
+            }
+            
             string code = File.ReadAllText( sourceFile.FullName );
 
             code =
-$@"
-using System;
-using System.Collections.Generic;
-using System.IO;
-using Rau;
-using Rau.Standard;
-
+$@"{namespaceBuilder}
 namespace Rau.Config
 {{
     public sealed class CompiledApiBuilder : ApiBuilder

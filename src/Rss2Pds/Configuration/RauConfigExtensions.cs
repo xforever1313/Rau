@@ -17,27 +17,21 @@
 //
 
 using Rau.Standard;
+using Rau.Standard.Configuration;
 
-namespace Rau
+namespace Rau.Configuration
 {
-    internal sealed class RauConfigurator : IRauConfigurator
+    internal static class RauConfigExtensions
     {
-        // ---------------- Constructor ----------------
-
-        public RauConfigurator( Version? assemblyVersion )
+        /// <summary>
+        /// Tries to validate the configuration object.
+        /// Returns an empty list if there are no configuration failures.
+        /// </summary>
+        public static List<string> TryValidate( this RauConfig config )
         {
-            this.Config = new RauConfig( assemblyVersion );
-        }
-        
-        // ---------------- Properties ----------------
-        
-        public RauConfig Config { get; private set; }
-        
-        // ---------------- Methods ----------------
+            var errors = new List<string>();
 
-        public void Configure( RauConfig config )
-        {
-            this.Config = config;
+            return errors;
         }
     }
 }

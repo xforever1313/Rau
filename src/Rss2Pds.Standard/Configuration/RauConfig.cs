@@ -16,7 +16,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-namespace Rau.Standard
+namespace Rau.Standard.Configuration
 {
     public record class RauConfig
     {

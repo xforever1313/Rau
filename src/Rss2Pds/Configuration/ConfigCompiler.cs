@@ -21,7 +21,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 
-namespace Rau
+namespace Rau.Configuration
 {
     internal sealed class ConfigCompiler
     {

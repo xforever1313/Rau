@@ -16,27 +16,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-using Rau.Standard;
-using Rau.Standard.Configuration;
-
-namespace Rau
+namespace Rau.Standard.Configuration
 {
-    public abstract class ApiBuilder
+    /// <summary>
+    /// Interface that allows a user to configure
+    /// Rau's global configuration.
+    ///
+    /// Plugin writers can write extension methods
+    /// to this interface to allow configuration of their
+    /// plugins during the configuration stage.
+    /// </summary>
+    public interface IRauConfigurator
     {
-        // ---------------- Constructor ----------------
+        // ---------------- Properties ----------------
 
-        protected ApiBuilder()
-        {
-        }
+        RauConfig Config { get; }
 
         // ---------------- Methods ----------------
-
-        public virtual void ConfigureRauSettings( IRauConfigurator configurator )
-        {
-        }
-
-        public virtual void ConfigureBot( IRauApi rau )
-        {
-        }
+        
+        void Configure( RauConfig config );
     }
 }

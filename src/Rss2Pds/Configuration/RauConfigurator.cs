@@ -19,24 +19,26 @@
 using Rau.Standard;
 using Rau.Standard.Configuration;
 
-namespace Rau
+namespace Rau.Configuration
 {
-    public abstract class ApiBuilder
+    internal sealed class RauConfigurator : IRauConfigurator
     {
         // ---------------- Constructor ----------------
 
-        protected ApiBuilder()
+        public RauConfigurator( Version? assemblyVersion )
         {
+            this.Config = new RauConfig( assemblyVersion );
         }
-
+        
+        // ---------------- Properties ----------------
+        
+        public RauConfig Config { get; private set; }
+        
         // ---------------- Methods ----------------
 
-        public virtual void ConfigureRauSettings( IRauConfigurator configurator )
+        public void Configure( RauConfig config )
         {
-        }
-
-        public virtual void ConfigureBot( IRauApi rau )
-        {
+            this.Config = config;
         }
     }
 }

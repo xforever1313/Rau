@@ -38,11 +38,12 @@ namespace Rau
 
         public RauApi(
             RauConfig config,
+            IReadOnlyDictionary<Guid, IRauPlugin> plugins,
             IHttpClientFactory httpClientFactory,
             Serilog.ILogger log
         )
         {
-            this.plugins = new Dictionary<Guid, IRauPlugin>();
+            this.plugins = new Dictionary<Guid, IRauPlugin>( plugins );
             this.Plugins = new ReadOnlyDictionary<Guid, IRauPlugin>( this.plugins );
 
             this.Config = config;

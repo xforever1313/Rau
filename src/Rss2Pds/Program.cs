@@ -16,10 +16,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
+using System.Diagnostics;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Mono.Options;
-using Prometheus;
 using Rau.Standard;
 using Rau.Standard.Configuration;
 using Rau.Configuration;
@@ -84,9 +83,12 @@ namespace Rau
                     Console.WriteLine( "Config file does not exist." );
                     return 4;
                 }
-                RauPluginLoader pluginLoader = LoadPlugins( configFile );
+                
+                // First, need to load all the plugins from the assemblies
+                // since we need the assemblies loaded before trying to compile the config file.
+                RauPluginLoader? pluginLoader = LoadPlugins( configFile );
 
-                ApiBuilder apiBuilder = GetBuilder( configFile, pluginLoader.ConfigurationNamespaces );
+                ApiBuilder? apiBuilder = GetBuilder( configFile, pluginLoader.ConfigurationNamespaces );
                 RauConfig config = GetConfig( apiBuilder );
                 {
                     List<string> errors = config.TryValidate();
@@ -107,8 +109,13 @@ namespace Rau
                 log = HostingExtensions.CreateLog( config, OnTelegramFailure );
                 
                 using var httpClient = new BskyHttpClientFactory( config );
-
-                using var api = new RauApi( config, httpClient, log );
+                
+                // Plugins require an API to be created before initializing them.
+                using var api = new RauApi( config, pluginLoader.LoadedPlugins, httpClient, log );
+                InitPlugins( log, api );
+                
+                // Configure the bot only after the plugins were initialized.
+                // Plugins may need to be initialized before they are configured.
                 apiBuilder.ConfigureBot( api );
                 
                 WebApplicationBuilder builder = WebApplication.CreateBuilder( args );
@@ -117,31 +124,14 @@ namespace Rau
                 builder.Services.AddControllersWithViews();
                 builder.Host.UseSerilog( log );
                 builder.Services.AddSingleton<IHttpClientFactory>( httpClient );
-                builder.Services.ConfigurePdsServices( api );
-
-                WebApplication app = builder.Build();
-                if( config.MetricsPort is not null )
-                {
-                    builder.WebHost.UseUrls( $"http://0.0.0.0:{config.MetricsPort}" );
-
-                    app.UseRouting();
-
-                    // Per https://learn.microsoft.com/en-us/aspnet/core/diagnostics/asp0014?view=aspnetcore-8.0:
-                    // Warnings from this rule can be suppressed if
-                    // the target UseEndpoints invocation is invoked without
-                    // any mappings as a strategy to organize middleware ordering.
-                    #pragma warning disable ASP0014 // Suggest using top level route registrations
-                    app.UseEndpoints(
-                        endpoints =>
-                        {
-                            endpoints.MapMetrics( "/Metrics" );
-                        }
-                    );
-                    #pragma warning restore ASP0014 // Suggest using top level route registrations
-                }
+                WebApplication app = builder.ConfigurePdsServices( api );
 
                 log.Information( "Application Running..." );
 
+                // These are no longer needed, set to null so they get collected.
+                apiBuilder = null;
+                options = null;
+                pluginLoader = null;
                 app.Run();
             }
             catch( OptionException e )
@@ -232,6 +222,17 @@ namespace Rau
             var pluginLoader = new RauPluginLoader();
             // TODO: Iterate through plugins
             return pluginLoader;
+        }
+
+        private static void InitPlugins( Serilog.ILogger log, RauApi api )
+        {
+            foreach( IRauPlugin plugin in api.Plugins.Values )
+            {
+                log.Debug( $"Loading plugin {plugin.PluginName}..." );
+                Stopwatch watch = Stopwatch.StartNew();
+                plugin.Initialize( api );
+                log.Debug( $"Loaded plugin {plugin.PluginName}, took {watch.Elapsed.TotalSeconds} Seconds." );
+            }
         }
     }
 }

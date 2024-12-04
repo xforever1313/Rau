@@ -16,7 +16,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Prometheus;
 using Quartz;
 using Rau.Standard;
 using Rau.Standard.Configuration;
@@ -79,13 +81,13 @@ namespace Rau
             return log;
         }
 
-        public static IServiceCollection ConfigurePdsServices(
-            this IServiceCollection services,
+        public static WebApplication ConfigurePdsServices(
+            this WebApplicationBuilder builder,
             IRauApi api
         )
         {
-            services.AddSingleton<IRauApi>( api );
-            services.AddQuartz(
+            builder.Services.AddSingleton<IRauApi>( api );
+            builder.Services.AddQuartz(
                 q =>
                 {
                     #if false
@@ -116,7 +118,7 @@ namespace Rau
                 }
             );
 
-            services.AddQuartzHostedService(
+            builder.Services.AddQuartzHostedService(
                 options =>
                 {
                     options.AwaitApplicationStarted = true;
@@ -124,7 +126,28 @@ namespace Rau
                 }
             );
 
-            return services;
+            WebApplication app = builder.Build();
+            if( api.Config.MetricsPort is not null )
+            {
+                builder.WebHost.UseUrls( $"http://0.0.0.0:{api.Config.MetricsPort}" );
+
+                app.UseRouting();
+
+                // Per https://learn.microsoft.com/en-us/aspnet/core/diagnostics/asp0014?view=aspnetcore-8.0:
+                // Warnings from this rule can be suppressed if
+                // the target UseEndpoints invocation is invoked without
+                // any mappings as a strategy to organize middleware ordering.
+                #pragma warning disable ASP0014 // Suggest using top level route registrations
+                app.UseEndpoints(
+                    endpoints =>
+                    {
+                        endpoints.MapMetrics( "/Metrics" );
+                    }
+                );
+                #pragma warning restore ASP0014 // Suggest using top level route registrations
+            }
+
+            return app;
         }
     }
 }

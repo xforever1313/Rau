@@ -115,7 +115,7 @@ namespace Rau.Configuration
                 .ToList<MetadataReference>();
 
             references.Add( MetadataReference.CreateFromFile( typeof( Uri ).Assembly.Location ) );
-
+            
             SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText( code );
 
             var options = new CSharpCompilationOptions(

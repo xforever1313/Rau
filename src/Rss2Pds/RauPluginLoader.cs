@@ -116,7 +116,7 @@ namespace Rau
                 errorMessage = $"Type {type.FullName} is abstract, can not use as a plugin implementation.";
                 return false;
             }
-            else if( type.IsAssignableTo( typeof( IRauPlugin ) ) )
+            else if( type.IsAssignableTo( typeof( IRauPlugin ) ) == false )
             {
                 errorMessage = $"Type {type.FullName} can not be assigned to the {nameof( IRauPlugin )} interface.  Please ensure it implements this interface.";
                 return false;

@@ -83,12 +83,15 @@ namespace Rau
                     Console.WriteLine( "Config file does not exist." );
                     return 4;
                 }
+
+                var configCompiler = new ConfigCompiler( configFile );
+                IEnumerable<FileInfo>? pluginFiles = configCompiler.Preprocess();
                 
                 // First, need to load all the plugins from the assemblies
                 // since we need the assemblies loaded before trying to compile the config file.
-                RauPluginLoader? pluginLoader = LoadPlugins( configFile );
+                RauPluginLoader? pluginLoader = LoadPlugins( pluginFiles );
 
-                ApiBuilder? apiBuilder = GetBuilder( configFile, pluginLoader.ConfigurationNamespaces );
+                ApiBuilder? apiBuilder = GetBuilder( configCompiler, pluginLoader.ConfigurationNamespaces );
                 RauConfig config = GetConfig( apiBuilder );
                 {
                     List<string> errors = config.TryValidate();
@@ -129,6 +132,8 @@ namespace Rau
                 log.Information( "Application Running..." );
 
                 // These are no longer needed, set to null so they get collected.
+                configCompiler = null;
+                pluginFiles = null;
                 apiBuilder = null;
                 options = null;
                 pluginLoader = null;
@@ -196,14 +201,13 @@ namespace Rau
             log?.Warning( $"Telegram message did not send:{Environment.NewLine}{e}" );
         }
 
-        private static ApiBuilder GetBuilder( FileInfo fileInfo, IEnumerable<string> usingStatements )
+        private static ApiBuilder GetBuilder( ConfigCompiler compiler, IEnumerable<string> usingStatements )
         {
             ArgumentNullException.ThrowIfNull( version );
 
             Console.WriteLine( "Compiling API Builder..." );
 
-            var compiler = new ConfigCompiler( version );
-            ApiBuilder builder = compiler.Compile( fileInfo, usingStatements );
+            ApiBuilder builder = compiler.Compile( usingStatements );
             Console.WriteLine( "Compiling API Builder... Done!" );
 
             return builder;
@@ -217,10 +221,13 @@ namespace Rau
             return rauConfigurator.Config;
         }
 
-        private static RauPluginLoader LoadPlugins( FileInfo configFile )
+        private static RauPluginLoader LoadPlugins( IEnumerable<FileInfo> pluginPaths )
         {
             var pluginLoader = new RauPluginLoader();
-            // TODO: Iterate through plugins
+            foreach( FileInfo fileInfo in pluginPaths )
+            {
+                pluginLoader.AddPlugin( fileInfo );
+            }
             return pluginLoader;
         }
 

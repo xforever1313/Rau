@@ -18,6 +18,7 @@
 
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
@@ -28,22 +29,61 @@ namespace Rau.Configuration
     {
         // ---------------- Fields ----------------
 
-        private readonly Version assemblyVersion;
+        private readonly Regex pluginRegex = new Regex(
+            @"^\s*#plugin\s+(?<plugin>[^\r\n]+)",
+            RegexOptions.Compiled | RegexOptions.ExplicitCapture
+        );
+        
+        private readonly FileInfo configFile;
 
+        private string? sourceCode;
+        
         // ---------------- Constructor ----------------
 
-        public ConfigCompiler( Version assemblyVersion )
+        public ConfigCompiler( FileInfo configFile )
         {
-            this.assemblyVersion = assemblyVersion;
+            this.configFile = configFile;
         }
 
         // ---------------- Methods ----------------
 
-        public ApiBuilder Compile( FileInfo sourceFile, IEnumerable<string> namespaces )
+        /// <summary>
+        /// Preprocesses the source file and determines where plugin files are.
+        /// </summary>
+        public IEnumerable<FileInfo> Preprocess()
         {
+            var plugins = new List<FileInfo>();
+            var fileContents = new StringBuilder();
+
+            foreach( string line in File.ReadAllLines( configFile.FullName ) )
+            {
+                Match match = pluginRegex.Match( line );
+                if( match.Success )
+                {
+                    plugins.Add( new FileInfo( match.Groups["plugin"].Value ) );
+                }
+                else
+                {
+                    fileContents.AppendLine( line );
+                }
+            }
+            
+            this.sourceCode = fileContents.ToString();
+            return plugins;
+        }
+
+        public ApiBuilder Compile( IEnumerable<string> namespaces )
+        {
+            if( sourceCode is null )
+            {
+                throw new InvalidOperationException(
+                    "Can not compile config file, it has not been preprocessed yet."
+                );
+            }
+            
             const string expectedType = "Rau.Config.CompiledApiBuilder";
             
-            Assembly asm = CompileAsm( sourceFile, namespaces );
+            Assembly asm = CompileAsm( namespaces );
 
             Type? type = asm.GetType( expectedType );
             if( type is null )
@@ -64,9 +104,9 @@ namespace Rau.Configuration
             return (ApiBuilder)obj;
         }
 
-        private Assembly CompileAsm( FileInfo sourceFile, IEnumerable<string> namespaces )
+        private Assembly CompileAsm( IEnumerable<string> namespaces )
         {
-            string code = GetCode( sourceFile, namespaces );
+            string code = GetCode( namespaces );
 
             // Taken from https://stackoverflow.com/a/47732064
             Assembly[] refs = AppDomain.CurrentDomain.GetAssemblies();
@@ -112,8 +152,15 @@ namespace Rau.Configuration
             return Assembly.Load( ms.ToArray() );
         }
 
-        private string GetCode( FileInfo sourceFile, IEnumerable<string> namespaces )
+        private string GetCode( IEnumerable<string> namespaces )
         {
+            if( this.sourceCode is null )
+            {
+                throw new InvalidOperationException(
+                    "Can not compile config file, it has not been preprocessed yet."
+                );
+            }
+            
             var namespaceBuilder = new StringBuilder();
             namespaceBuilder.AppendLine( "using System;" );
             namespaceBuilder.AppendLine( "using System.Collections.Generic;" );
@@ -127,8 +174,8 @@ namespace Rau.Configuration
             {
                 namespaceBuilder.AppendLine( ns );
             }
-            
-            string code = File.ReadAllText( sourceFile.FullName );
+
+            string code = this.sourceCode;
 
             code =
 $@"{namespaceBuilder}

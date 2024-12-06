@@ -33,29 +33,43 @@ namespace Rau.Configuration
             @"^\s*#plugin\s+(?<plugin>[^\r\n]+)",
             RegexOptions.Compiled | RegexOptions.ExplicitCapture
         );
-        
-        private readonly FileInfo configFile;
 
-        private string? sourceCode;
+        private readonly Func<string> readConfigFile;
         
         // ---------------- Constructor ----------------
 
-        public ConfigCompiler( FileInfo configFile )
+        public ConfigCompiler( FileInfo configFile ) :
+            this( () => File.ReadAllText( configFile.FullName ) )
         {
-            this.configFile = configFile;
         }
 
+        public ConfigCompiler( string code ) :
+            this( () => code )
+        {
+        }
+
+        private ConfigCompiler( Func<string> readConfigFile )
+        {
+            this.readConfigFile = readConfigFile;
+        }
+
+        // ---------------- Properties ----------------
+        
+        internal string? ConfigFileSourceCode { get; private set; }
+        
         // ---------------- Methods ----------------
 
         /// <summary>
         /// Preprocesses the source file and determines where plugin files are.
         /// </summary>
-        public IEnumerable<FileInfo> Preprocess()
+        public IReadOnlyCollection<FileInfo> Preprocess()
         {
             var plugins = new List<FileInfo>();
             var fileContents = new StringBuilder();
 
-            foreach( string line in File.ReadAllLines( configFile.FullName ) )
+            using var reader = new StringReader( this.readConfigFile() );
+            string? line = reader.ReadLine();
+            while( line is not null )
             {
                 Match match = pluginRegex.Match( line );
                 if( match.Success )
@@ -66,15 +80,17 @@ namespace Rau.Configuration
                 {
                     fileContents.AppendLine( line );
                 }
+
+                line = reader.ReadLine();
             }
             
-            this.sourceCode = fileContents.ToString();
+            this.ConfigFileSourceCode = fileContents.ToString();
             return plugins;
         }
 
         public ApiBuilder Compile( IEnumerable<string> namespaces )
         {
-            if( sourceCode is null )
+            if( this.ConfigFileSourceCode is null )
             {
                 throw new InvalidOperationException(
                     "Can not compile config file, it has not been preprocessed yet."
@@ -154,7 +170,7 @@ namespace Rau.Configuration
 
         private string GetCode( IEnumerable<string> namespaces )
         {
-            if( this.sourceCode is null )
+            if( this.ConfigFileSourceCode is null )
             {
                 throw new InvalidOperationException(
                     "Can not compile config file, it has not been preprocessed yet."
@@ -172,10 +188,10 @@ namespace Rau.Configuration
             namespaceBuilder.AppendLine( "using Rau.Standard.Logging;" );
             foreach( string ns in namespaces )
             {
-                namespaceBuilder.AppendLine( ns );
+                namespaceBuilder.AppendLine( $"using {ns};" );
             }
 
-            string code = this.sourceCode;
+            string code = this.ConfigFileSourceCode;
 
             code =
 $@"{namespaceBuilder}

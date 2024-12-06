@@ -19,7 +19,7 @@
 using Rau.Standard;
 using Rau.Standard.Configuration;
 
-[assembly:RauConfigurationNamespace( $"{nameof( Rau.Plugins.Canary )}" )]
+[assembly:RauConfigurationNamespace( $"Rau.Plugins.Canary" )]
 
 namespace Rau.Plugins.Canary
 {

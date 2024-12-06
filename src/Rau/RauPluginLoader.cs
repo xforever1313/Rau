@@ -97,7 +97,7 @@ namespace Rau
                     this.loadedPlugins.Add( pluginGuid, plugin );
                 }
             }
-
+            
             LoadNamespaces( assembly );
             
             if( errors.Any() )
@@ -138,7 +138,7 @@ namespace Rau
             
             foreach( RauConfigurationNamespaceAttribute ns in namespaces )
             {
-                if( this.configurationNamespaces.Contains( ns.NamespaceName ) )
+                if( this.configurationNamespaces.Contains( ns.NamespaceName ) == false )
                 {
                     this.configurationNamespaces.Add( ns.NamespaceName );
                 }

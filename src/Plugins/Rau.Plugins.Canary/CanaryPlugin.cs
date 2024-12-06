@@ -86,7 +86,12 @@ namespace Rau.Plugins.Canary
         {
             var uptime = TimeSpan.FromMilliseconds( Environment.TickCount64 );
             DateTime timeStamp = dateTimeFactory.Now;
-            
+
+            return DefaultPost( timeStamp, uptime, account );
+        }
+
+        public static PdsPost DefaultPost( DateTime timeStamp, TimeSpan uptime, PdsAccount account )
+        {            
             string post = $"Chirp! The PDS at {account.Instance.Host} is still online as of: {timeStamp:dddd, MMMM d yyyy, h:mmtt} server time.{Environment.NewLine}" +
                           $"Server's been up for {uptime.Days} days, {uptime.Hours} hours. #Uptime";
 

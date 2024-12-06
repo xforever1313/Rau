@@ -16,4 +16,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
+global using System;
 global using Microsoft.VisualStudio.TestTools.UnitTesting;
+global using Rau;
+global using Rau.Configuration;
+global using Rau.EventScheduler;
+global using Rau.Logging;
+global using Rau.Standard;

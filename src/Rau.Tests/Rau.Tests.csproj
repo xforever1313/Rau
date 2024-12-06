@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Plugins\Rau.Plugins.Canary\Rau.Plugins.Canary.csproj" />
-    <ProjectReference Include="..\Rss2Pds\Rss2Pds.csproj" />
+    <ProjectReference Include="..\Rau\Rau.csproj" />
   </ItemGroup>
 
 </Project>

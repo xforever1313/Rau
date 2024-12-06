@@ -32,7 +32,7 @@ namespace DevOps
         {
             this.RepoRoot = context.Environment.WorkingDirectory;
             this.SrcDir = this.RepoRoot.Combine( "src" );
-            this.Solution = this.SrcDir.CombineWithFilePath( "Rss2Pds.sln" );
+            this.Solution = this.SrcDir.CombineWithFilePath( "Rau.sln" );
             this.DistFolder = this.RepoRoot.Combine( "dist" );
 
             this.BlueSkyDistFolder = this.DistFolder.Combine( "bluesky" );
@@ -40,7 +40,7 @@ namespace DevOps
             this.BlueSkyZipFilesDistFolder= this.BlueSkyDistFolder.Combine( "zip" );
 
             this.TestResultsFolder = this.RepoRoot.Combine( "TestResults" );
-            this.TestCsProj = this.SrcDir.CombineWithFilePath( "Rss2Pds.Tests/Rss2Pds.Tests.csproj" );
+            this.TestCsProj = this.SrcDir.CombineWithFilePath( "Rau.Tests/Rau.Tests.csproj" );
         }
 
         // ---------------- Properties ----------------

@@ -8,10 +8,10 @@
 
   <ItemGroup>
 	<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-	  <_Parameter1>Rss2Pds</_Parameter1>
+	  <_Parameter1>Rau</_Parameter1>
 	</AssemblyAttribute>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-          <_Parameter1>Rss2Pds.Tests</_Parameter1>
+          <_Parameter1>Rau.Tests</_Parameter1>
         </AssemblyAttribute>
   </ItemGroup>
 

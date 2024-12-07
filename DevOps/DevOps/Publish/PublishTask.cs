@@ -18,6 +18,7 @@
 
 using Cake.Common.Diagnostics;
 using Cake.Common.IO;
+using Cake.Common.Solution;
 using Cake.Common.Tools.DotNet;
 using Cake.Common.Tools.DotNet.Publish;
 using Cake.Core.IO;
@@ -26,56 +27,111 @@ using Cake.Frosting;
 namespace DevOps.Publish
 {
     [TaskName( "publish" )]
-    [IsDependentOn( typeof( PublishBlueSkyTask ) )]
-    public sealed class PublishAllTask : DevopsTask
+    [IsDependentOn( typeof( PublishWinX64 ) )]
+    [IsDependentOn( typeof( PublishLinuxX64 ) )]
+    [IsDependentOn( typeof( PublishLinuxArm64 ) )]
+    public sealed class PublishTask : DevopsTask
     {
     }
 
-    [TaskName( "publish_bluesky" )]
-    public sealed class PublishBlueSkyTask : DevopsTask
+    [TaskName( "publish_win_x64" )]
+    public sealed class PublishWinX64 : BasePublishTask
     {
-        // ---------------- Functions ----------------
+        // ---------------- Properties ----------------
+
+        public override string Rid => "win-x64";
+    }
+
+    [TaskName( "publish_linux_x64" )]
+    public sealed class PublishLinuxX64 : BasePublishTask
+    {
+        // ---------------- Properties ----------------
+
+        public override string Rid => "linux-x64";
+    }
+
+    [TaskName( "publish_linux_arm64" )]
+    public sealed class PublishLinuxArm64 : BasePublishTask
+    {
+        // ---------------- Properties ----------------
+
+        public override string Rid => "linux-arm64";
+    }
+
+    public abstract class BasePublishTask : DevopsTask
+    {
+        // ---------------- Properties ----------------
+
+        public abstract string Rid { get; }
+
+        // ---------------- Methods ----------------
 
         public override void Run( BuildContext context )
         {
-            context.EnsureDirectoryExists( context.BlueSkyDistFolder );
+            context.EnsureDirectoryExists( context.DistFolder );
 
-            DirectoryPath looseFilesDir = context.BlueSkyLooseFilesDistFolder;
+            DirectoryPath looseFilesDir = context.LooseFilesDistFolder;
             context.EnsureDirectoryExists( looseFilesDir );
-            context.CleanDirectory( looseFilesDir );
 
-            context.Information( "Publishing App" );
+            DirectoryPath archFolder = looseFilesDir.Combine( new DirectoryPath( this.Rid ) );
+            context.EnsureDirectoryExists( archFolder );
+            context.CleanDirectory( archFolder );
+
+            DirectoryPath binFolder = archFolder.Combine( new DirectoryPath( "bin" ) );
+            context.EnsureDirectoryExists( binFolder );
+
+            DirectoryPath pluginsFolder = archFolder.Combine( new DirectoryPath( "plugins" ) );
+            context.EnsureDirectoryExists( pluginsFolder );
 
             var publishOptions = new DotNetPublishSettings
             {
                 Configuration = "Release",
-                OutputDirectory = looseFilesDir.ToString(),
-                MSBuildSettings = context.GetBuildSettings()
+                OutputDirectory = binFolder.ToString(),
+                MSBuildSettings = context.GetBuildSettings(),
+                PublishReadyToRun = true,
+                PublishReadyToRunShowWarnings = true,
+                SelfContained = false,
+                Runtime = this.Rid
             };
 
-            FilePath servicePath = context.SrcDir.CombineWithFilePath(
-                "Rss2Pds.Bsky/Rss2Pds.Bsky.csproj"
-            );
+            context.Information( "Publishing Service..." );
+            context.DotNetPublish( context.ServiceProject.ToString(), publishOptions );
 
-            context.DotNetPublish( servicePath.ToString(), publishOptions );
+            foreach( SolutionProject plugin in context.PluginProjects )
+            {
+                context.Information( string.Empty );
+                context.Information( $"Publishing {plugin.Name}..." );
+
+                DirectoryPath pluginFolder = pluginsFolder.Combine( plugin.Name.Replace( "Rau.Plugins.", "" ) );
+                context.EnsureDirectoryExists( pluginFolder );
+                publishOptions.OutputDirectory = pluginFolder;
+                context.DotNetPublish( plugin.Path.FullPath, publishOptions );
+            }
+
             context.Information( string.Empty );
 
-            CopyRootFile( context, "Readme.md" );
-            CopyRootFile( context, "Credits.md" );
-            CopyRootFile( context, "License.md" );
+            context.Information( "Coping readme files..." );
+            CopyRootFile( context, "Readme.md", archFolder );
+            CopyRootFile( context, "Credits.md", archFolder );
+            CopyRootFile( context, "License.md", archFolder );
 
-            context.EnsureDirectoryExists( context.BlueSkyZipFilesDistFolder );
-            context.CleanDirectory( context.BlueSkyZipFilesDistFolder );
+            context.Information( "Zipping..." );
+            context.EnsureDirectoryExists( context.ZipFilesDistFolder );
+            FilePath zipFile = context.ZipFilesDistFolder.CombineWithFilePath( $"Rau_{this.Rid}.zip" );
+            if( context.FileExists( zipFile ) )
+            {
+                context.DeleteFile( zipFile );
+            }
+            context.Zip( archFolder, zipFile );
 
-            FilePath zipFile = context.BlueSkyZipFilesDistFolder.CombineWithFilePath( "Rss2Pds_BlueSky.zip" );
-            context.Zip( context.BlueSkyLooseFilesDistFolder, zipFile );
+            context.Information( "Done Publishing!" );
         }
 
-        private void CopyRootFile( BuildContext context, FilePath fileName )
+        private void CopyRootFile( BuildContext context, FilePath fileName, DirectoryPath archFolder )
         {
             fileName = context.RepoRoot.CombineWithFilePath( fileName );
-            context.Information( $"Copying '{fileName}' to dist" );
-            context.CopyFileToDirectory( fileName, context.BlueSkyLooseFilesDistFolder );
+            context.Information( $"Copying '{fileName}' to '{archFolder}'." );
+            context.CopyFileToDirectory( fileName, archFolder );
         }
     }
 }

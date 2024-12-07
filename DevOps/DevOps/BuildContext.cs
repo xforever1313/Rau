@@ -16,10 +16,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
+using Cake.Common.Solution;
 using Cake.Common.Tools.DotNet.MSBuild;
 using Cake.Core;
 using Cake.Core.IO;
 using Cake.Frosting;
+using Seth.CakeLib;
 
 namespace DevOps
 {
@@ -33,14 +35,31 @@ namespace DevOps
             this.RepoRoot = context.Environment.WorkingDirectory;
             this.SrcDir = this.RepoRoot.Combine( "src" );
             this.Solution = this.SrcDir.CombineWithFilePath( "Rau.sln" );
+            this.ServiceProject = this.SrcDir.CombineWithFilePath( "Rau/Rau.csproj" );
             this.DistFolder = this.RepoRoot.Combine( "dist" );
 
-            this.BlueSkyDistFolder = this.DistFolder.Combine( "bluesky" );
-            this.BlueSkyLooseFilesDistFolder = this.BlueSkyDistFolder.Combine( "files" );
-            this.BlueSkyZipFilesDistFolder= this.BlueSkyDistFolder.Combine( "zip" );
+            this.LooseFilesDistFolder = this.DistFolder.Combine( "files" );
+            this.ZipFilesDistFolder= this.DistFolder.Combine( "zip" );
 
             this.TestResultsFolder = this.RepoRoot.Combine( "TestResults" );
             this.TestCsProj = this.SrcDir.CombineWithFilePath( "Rau.Tests/Rau.Tests.csproj" );
+
+            var pluginProjects = new List<SolutionProject>();
+            this.PluginProjects = pluginProjects.AsReadOnly();
+            context.PerformActionOnSolutionCsProjectFiles(
+                this.Solution,
+                ( SolutionProject project ) =>
+                {
+                    lock( pluginProjects )
+                    {
+                        pluginProjects.Add( project );
+                    }
+                },
+                ( SolutionProject project ) =>
+                {
+                    return project.Name.StartsWith( "Rau.Plugins" );
+                }
+            );
         }
 
         // ---------------- Properties ----------------
@@ -51,13 +70,15 @@ namespace DevOps
 
         public FilePath Solution { get; }
 
+        public FilePath ServiceProject { get; }
+
+        public IReadOnlyCollection<SolutionProject> PluginProjects { get; }
+
         public DirectoryPath DistFolder { get; }
 
-        public DirectoryPath BlueSkyDistFolder { get; }
+        public DirectoryPath LooseFilesDistFolder { get; }
 
-        public DirectoryPath BlueSkyLooseFilesDistFolder { get; }
-
-        public DirectoryPath BlueSkyZipFilesDistFolder { get; }
+        public DirectoryPath ZipFilesDistFolder { get; }
 
         public DirectoryPath TestResultsFolder { get; }
 

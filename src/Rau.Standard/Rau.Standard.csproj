@@ -6,14 +6,30 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup>
+	<PackageId>Rau.Standard</PackageId>
+	<Title>Rau.Standard</Title>
+	<Version>1.0.0</Version>
+	<Authors>Seth Hendrick</Authors>
+	<Copyright>Copyright (C) Seth Hendrick</Copyright>
+	<Description>Library used to help make plugins for Rau, a BlueSky bot framework.</Description>
+	<PackageLicenseExpression> AGPL-3.0-only</PackageLicenseExpression>
+	<PackageProjectUrl>https://github.com/xforever1313/Rau</PackageProjectUrl>
+	<PackageTags>rau;bluesky;at;atproto;pds;bot;post;seth;hendrick;xforever1313</PackageTags>
+	<RepositoryType>git</RepositoryType>
+	<RepositoryUrl>https://github.com/xforever1313/Rau</RepositoryUrl>
+	<PackageIcon>icon.png</PackageIcon>
+	<PackageReleaseNotes>View release notes here: [https://github.com/xforever1313/IpfsUploader/releases](https://github.com/xforever1313/Rau/releases)</PackageReleaseNotes>
+	<PackageReadmeFile>Readme.md</PackageReadmeFile>
+  </PropertyGroup>
+	
   <ItemGroup>
 	<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
 	  <_Parameter1>Rau</_Parameter1>
 	</AssemblyAttribute>
-        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-          <_Parameter1>Rau.Tests</_Parameter1>
-        </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>Rau.Tests</_Parameter1>
+    </AssemblyAttribute>
   </ItemGroup>
-
 
 </Project>

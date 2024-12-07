@@ -36,6 +36,7 @@ namespace DevOps
             this.SrcDir = this.RepoRoot.Combine( "src" );
             this.Solution = this.SrcDir.CombineWithFilePath( "Rau.sln" );
             this.ServiceProject = this.SrcDir.CombineWithFilePath( "Rau/Rau.csproj" );
+            this.StandardProject = this.SrcDir.CombineWithFilePath( "Rau.Standard/Rau.Standard.csproj" );
             this.DistFolder = this.RepoRoot.Combine( "dist" );
 
             this.LooseFilesDistFolder = this.DistFolder.Combine( "files" );
@@ -71,6 +72,8 @@ namespace DevOps
         public FilePath Solution { get; }
 
         public FilePath ServiceProject { get; }
+
+        public FilePath StandardProject { get; }
 
         public IReadOnlyCollection<SolutionProject> PluginProjects { get; }
 

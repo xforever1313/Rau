@@ -1,5 +1,5 @@
 ﻿//
-// Rau - A bot that reads RSS feeds and posts them to a AT-Proto PDS node
+// Rau - An AT-Proto Bot Framework
 // Copyright (C) 2024 Seth Hendrick
 // 
 // This program is free software: you can redistribute it and/or modify

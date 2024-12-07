@@ -13,7 +13,7 @@
 	<Authors>Seth Hendrick</Authors>
 	<Copyright>Copyright (C) Seth Hendrick</Copyright>
 	<Description>Library used to help make plugins for Rau, a BlueSky bot framework.</Description>
-	<PackageLicenseExpression> AGPL-3.0-only</PackageLicenseExpression>
+	<PackageLicenseExpression>AGPL-3.0-only</PackageLicenseExpression>
 	<PackageProjectUrl>https://github.com/xforever1313/Rau</PackageProjectUrl>
 	<PackageTags>rau;bluesky;at;atproto;pds;bot;post;seth;hendrick;xforever1313</PackageTags>
 	<RepositoryType>git</RepositoryType>

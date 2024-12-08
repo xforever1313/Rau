@@ -22,6 +22,7 @@ using X.Bluesky;
 
 namespace Rau
 {
+#if false
     public sealed class SkeetJob : IJob
     {
         // ---------------- Fields ----------------
@@ -66,4 +67,5 @@ namespace Rau
             }
         }
     }
+#endif
 }

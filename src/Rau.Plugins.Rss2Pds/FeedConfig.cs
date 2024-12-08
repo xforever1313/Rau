@@ -16,9 +16,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-namespace Rau
+namespace Rau.Plugins.Rss2Pds
 {
-    public sealed record class RssFeedConfig(
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="FeedUrl">The feed URL.</param>
+    /// <param name="Handle">The handle to post RSS messages to.</param>
+    /// <param name="Password">The app password to use.</param>
+    /// <param name="CronString">How often to check for RSS updates.</param>
+    /// <param name="HashTags">HashTags to add to the end of the message.</param>
+    /// <param name="AlertThreshold">
+    /// How many failed scrapes in a row must happen
+    /// before an error message is logged.
+    /// </param>
+    public sealed record class FeedConfig(
         Uri FeedUrl,
         string Handle,
         string Password,

@@ -129,6 +129,7 @@ namespace Rau
                 builder.Services.AddSingleton<IHttpClientFactory>( httpClient );
                 WebApplication app = builder.ConfigurePdsServices( api );
 
+                api.Init();
                 log.Information( "Application Running..." );
 
                 // These are no longer needed, set to null so they get collected.

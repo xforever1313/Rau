@@ -17,27 +17,62 @@
 //
 
 using Rau.Standard;
+using Serilog.Extensions.Logging;
+using X.Bluesky;
 
 namespace Rau
 {
     internal sealed class PdsPoster : IPdsPoster
     {
         // ---------------- Fields ---------------- 
-        
+
+        private readonly IRauApi api;
+
         private readonly IHttpClientFactory httpClientFactory;
-        
+
+        private readonly SerilogLoggerFactory msLogger;
+
+        private static readonly string[] languages = new string[]
+        {
+            "en",
+            "en-US"
+        };
+
         // ---------------- Constructor ---------------- 
 
-        public PdsPoster( IHttpClientFactory httpClientFactory )
+        public PdsPoster(
+            IRauApi api,
+            IHttpClientFactory httpClientFactory,
+            Serilog.ILogger log
+        )
         {
+            this.api = api;
             this.httpClientFactory = httpClientFactory;
+            this.msLogger = new SerilogLoggerFactory( log );
         }
         
         // ---------------- Methods ----------------
         
-        public Task Post( PdsAccount account, PdsPost postContents )
+        public async Task Post( PdsAccount account, PdsPost postContents )
         {
-            throw new NotImplementedException();
+            var client = new BlueskyClient(
+                this.httpClientFactory,
+                account.UserName,
+                account.Password,
+                languages,
+                true,
+                account.Instance,
+                this.msLogger.CreateLogger<BlueskyClient>()
+            );
+
+            if( postContents.PostAttachmentPage is null )
+            {
+                await client.Post( postContents.PostContents );
+            }
+            else
+            {
+                await client.Post( postContents.PostContents, postContents.PostAttachmentPage );
+            }
         }
     }
 }

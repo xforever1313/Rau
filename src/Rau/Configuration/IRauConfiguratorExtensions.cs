@@ -39,7 +39,7 @@ namespace Rau.Configuration
         /// <summary>
         /// Enables file logging if called.
         /// </summary>
-        /// <param name="filePath">The absolute file path to log to.</param>
+        /// <param name="filePath">The absolute file path to msLogger to.</param>
         public static void LogToFile( this IRauConfigurator rau, string filePath )
         {
             rau.LogToFile( new FileInfo( filePath ) );
@@ -48,7 +48,7 @@ namespace Rau.Configuration
         /// <summary>
         /// Enables file logging if called.
         /// </summary>
-        /// <param name="fileName">The file name to log to.</param>        
+        /// <param name="fileName">The file name to msLogger to.</param>
         public static void LogToFile( this IRauConfigurator rau, FileInfo filePath )
         {
             RauConfig config = rau.Config with

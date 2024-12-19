@@ -31,9 +31,9 @@ namespace Rau
         // ---------------- Fields ----------------
 
         private readonly ScheduledEventManager eventManager;
-        
+
         private readonly Dictionary<Guid, IRauPlugin> plugins;
-        
+
         // ---------------- Constructor ----------------
 
         public RauApi(
@@ -47,33 +47,33 @@ namespace Rau
             this.Plugins = new ReadOnlyDictionary<Guid, IRauPlugin>( this.plugins );
 
             this.Config = config;
-            
+
             this.eventManager = new ScheduledEventManager( this, log );
             this.DateTime = new RauDateTimeFactory();
             this.Logger = new RauLogger( log );
-            this.PdsPoster = new PdsPoster( httpClientFactory );
+            this.PdsPoster = new PdsPoster( this, httpClientFactory, log );
         }
-        
+
         // ---------------- Properties ----------------
 
         public RauConfig Config { get; private set; }
-        
+
         public IDateTimeFactory DateTime { get; }
 
         public IScheduledEventManager EventScheduler => this.eventManager;
-        
+
         public IRauLogger Logger { get; }
 
         public IPdsPoster PdsPoster { get; }
-        
+
         public IReadOnlyDictionary<Guid, IRauPlugin> Plugins { get; }
-        
+
         // ---------------- Methods ----------------
-        
-        // TODO:
-        // - Load Plugins
-        // - Compile Configuration
-        // - Start scheduled events
+
+        public void Init()
+        {
+            this.eventManager.Start();
+        }
         
         public void Dispose()
         {

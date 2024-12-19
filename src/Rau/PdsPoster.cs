@@ -19,6 +19,7 @@
 using Rau.Standard;
 using Serilog.Extensions.Logging;
 using X.Bluesky;
+using X.Bluesky.Models;
 
 namespace Rau
 {
@@ -65,14 +66,21 @@ namespace Rau
                 this.msLogger.CreateLogger<BlueskyClient>()
             );
 
-            if( postContents.PostAttachmentPage is null )
+            await client.Post(
+                postContents.PostContents,
+                postContents.PostAttachmentPage,
+                postContents.PostImages?.Select( p => this.ToImage( p ) ) ?? []
+            );
+        }
+
+        private Image ToImage( PostImage postImage )
+        {
+            return new Image
             {
-                await client.Post( postContents.PostContents );
-            }
-            else
-            {
-                await client.Post( postContents.PostContents, postContents.PostAttachmentPage );
-            }
+                Alt = postImage.AltText,
+                Content = postImage.ImageContents,
+                MimeType = postImage.MimeType
+            };
         }
     }
 }

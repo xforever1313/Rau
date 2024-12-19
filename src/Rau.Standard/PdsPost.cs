@@ -48,16 +48,78 @@ namespace Rau.Standard
         /// <param name="url">
         /// Url of attachment page.  Set to null to have none.
         /// </param>
-        public PdsPost( string postContents, Uri? url )
+        public PdsPost( string postContents, Uri? url ) :
+            this( postContents, url, (IEnumerable<PostImage>?)null )
+        {
+        }
+
+        /// <summary>
+        /// Creates a post with post contents and an attachment URL.
+        /// </summary>
+        /// <param name="image">
+        /// The image to inlcude on the post.
+        /// </param>
+        public PdsPost( string postContents, PostImage image ) :
+            this( postContents, null, [image] )
+        {
+        }
+
+        /// <summary>
+        /// Creates a post with post contents and an attachment URL.
+        /// <param name="images">
+        /// The image(s) to inlcude on the post.  Set to null to not include any.
+        /// </param>
+        public PdsPost( string postContents, IEnumerable<PostImage>? images ) :
+            this( postContents, null, images )
+        {
+        }
+
+        /// <summary>
+        /// Creates a post with post contents and an attachment URL.
+        /// </summary>
+        /// <param name="url">
+        /// Url of attachment page.  Set to null to have none.
+        /// </param>
+        /// <param name="image">
+        /// The image to inlcude on the post.
+        /// </param>
+        public PdsPost( string postContents, Uri? url, PostImage image ) :
+            this( postContents, url, [image] )
+        {
+        }
+
+        /// <summary>
+        /// Creates a post with post contents and an attachment URL.
+        /// </summary>
+        /// <param name="url">
+        /// Url of attachment page.  Set to null to have none.
+        /// </param>
+        /// <param name="images">
+        /// The image(s) to inlcude on the post.  Set to null to not include any.
+        /// </param>
+        public PdsPost( string postContents, Uri? url, IEnumerable<PostImage>? images )
         {
             this.PostContents = postContents;
             this.PostAttachmentPage = url;
+            this.PostImages = images;
         }
 
         // ---------------- Properties ----------------
 
+        /// <summary>
+        /// The text contents of the post.
+        /// </summary>
         public string PostContents { get; }
 
+        /// <param name="url">
+        /// Url of attachment page.  Set to null to have none.
+        /// </param>
         public Uri? PostAttachmentPage { get; }
+
+        /// <summary>
+        /// List of images to include on the post.
+        /// Set to null if no imagees are desired.
+        /// </summary>
+        public IEnumerable<PostImage>? PostImages { get; }
     }
 }

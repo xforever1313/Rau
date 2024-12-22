@@ -19,7 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{10BB
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rau.Plugins.Canary", "Plugins\Rau.Plugins.Canary\Rau.Plugins.Canary.csproj", "{787F2E8E-9FC5-46BE-B5DE-AA585D1FE3BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rau.Plugins.Rss2Pds", "Rau.Plugins.Rss2Pds\Rau.Plugins.Rss2Pds.csproj", "{651E3415-D9EE-4382-8CDB-778DFC660B44}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rau.Plugins.Rss2Pds", "Plugins\Rau.Plugins.Rss2Pds\Rau.Plugins.Rss2Pds.csproj", "{651E3415-D9EE-4382-8CDB-778DFC660B44}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -11,7 +11,7 @@
   </ItemGroup>
 	
   <ItemGroup>
-    <ProjectReference Include="..\Rau.Standard\Rau.Standard.csproj">
+    <ProjectReference Include="..\..\Rau.Standard\Rau.Standard.csproj">
       <Private>False</Private>
       <CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
     </ProjectReference>

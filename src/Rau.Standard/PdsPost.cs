@@ -26,6 +26,16 @@ namespace Rau.Standard
         // ---------------- Constructor ----------------
 
         /// <summary>
+        /// Default constructor.
+        /// 
+        /// Use the initialization syntax to set the properties
+        /// if using this constructor.
+        /// </summary>
+        public PdsPost()
+        {
+        }
+
+        /// <summary>
         /// Creates a post with no attachment page.
         /// </summary>
         public PdsPost( string postContents ) :
@@ -109,17 +119,24 @@ namespace Rau.Standard
         /// <summary>
         /// The text contents of the post.
         /// </summary>
-        public string PostContents { get; }
+        public string PostContents { get; init; } = "";
 
         /// <param name="url">
         /// Url of attachment page.  Set to null to have none.
         /// </param>
-        public Uri? PostAttachmentPage { get; }
+        public Uri? PostAttachmentPage { get; init; } = null;
 
         /// <summary>
         /// List of images to include on the post.
         /// Set to null if no imagees are desired.
         /// </summary>
-        public IEnumerable<PostImage>? PostImages { get; }
+        public IEnumerable<PostImage>? PostImages { get; init; } = null;
+
+        /// <summary>
+        /// The language(s) this post is posted in.
+        /// Set to the default value if null,
+        /// which is defaulted to en-US.
+        /// </summary>
+        public IEnumerable<string>? Languages { get; init; } = null;
     }
 }

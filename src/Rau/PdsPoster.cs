@@ -33,11 +33,7 @@ namespace Rau
 
         private readonly SerilogLoggerFactory msLogger;
 
-        private static readonly string[] languages = new string[]
-        {
-            "en",
-            "en-US"
-        };
+        private static readonly string[] defaultLanguages = [ "en", "en-US" ];
 
         // ---------------- Constructor ---------------- 
 
@@ -60,7 +56,7 @@ namespace Rau
                 this.httpClientFactory,
                 account.UserName,
                 account.Password,
-                languages,
+                postContents.Languages ?? defaultLanguages,
                 true,
                 account.Instance,
                 this.msLogger.CreateLogger<BlueskyClient>()

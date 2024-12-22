@@ -41,6 +41,9 @@ namespace Rau.Plugins.Rss2Pds
         /// App passwords are the recommended approach instead of
         /// using the main account password.
         /// </param>
+        /// <param name="pdsUrl">
+        /// The PDS instance to send messages to.
+        /// </param>
         /// <param name="cronString">
         /// How often to scrape the RSS feeds in the form of a cron string
         /// as described here:
@@ -64,22 +67,93 @@ namespace Rau.Plugins.Rss2Pds
         /// An ID that is associated with this feed.
         /// Use this to remove the feed.
         /// </returns>
-        public static int AddFeed(
+        public static int MirrorRssFeed(
             this IRauApi api,
             string feedUrl,
             string handle,
             string password,
+            string pdsUrl,
             string cronString,
             IEnumerable<string>? hashTags = null,
             uint? alertThreshold = null
         )
         {
-            return api.AddFeed(
-                new FeedConfig( new Uri( feedUrl ), handle, password, cronString, hashTags, alertThreshold )
+            return api.MirrorRssFeed(
+                new Uri( feedUrl ),
+                handle,
+                password,
+                new Uri( pdsUrl ),
+                cronString,
+                hashTags,
+                alertThreshold
             );
         }
 
-        public static int AddFeed( this IRauApi api, FeedConfig feedConfig )
+        /// <summary>
+        /// Adds a feed to watch.
+        /// </summary>
+        /// <param name="feedUrl">
+        /// The RSS feed to scrape.
+        /// </param>
+        /// <param name="handle">
+        /// The AT-proto handle to post the RSS feeds to.
+        /// </param>
+        /// <param name="password">
+        /// The password to the handle to login.
+        /// App passwords are the recommended approach instead of
+        /// using the main account password.
+        /// </param>
+        /// <param name="pdsUrl">
+        /// The PDS instance to send messages to.
+        /// </param>
+        /// <param name="cronString">
+        /// How often to scrape the RSS feeds in the form of a cron string
+        /// as described here:
+        /// https://www.quartz-scheduler.net/documentation/quartz-3.x/tutorial/crontriggers.html#cron-expressions
+        /// </param>
+        /// <param name="hashTags">
+        /// Any hash tags you wish to include after the summary of the feed and link
+        /// are posted.  Note, the more hash tags, the less of the summary is included
+        /// to stay under the character limit.
+        /// 
+        /// Do not include any '#' in front of the strings,
+        /// they will be included automatically.
+        /// 
+        /// Set to null or empty to not include any hash tags.
+        /// </param>
+        /// <param name="alertThreshold">
+        /// How many failed scrapes in a row must occur before
+        /// alerting an admin.  Set to null to not alert (default).
+        /// </param>
+        /// <returns>
+        /// An ID that is associated with this feed.
+        /// Use this to remove the feed.
+        /// </returns>
+        public static int MirrorRssFeed(
+            this IRauApi api,
+            Uri feedUrl,
+            string handle,
+            string password,
+            Uri pdsUrl,
+            string cronString,
+            IEnumerable<string>? hashTags = null,
+            uint? alertThreshold = null
+        )
+        {
+            return api.MirrorRssFeed(
+                new FeedConfig(
+                    feedUrl,
+                    handle,
+                    password,
+                    pdsUrl,
+                    cronString,
+                    hashTags,
+                    alertThreshold
+                )
+            );
+        }
+
+        public static int MirrorRssFeed( this IRauApi api, FeedConfig feedConfig )
         {
             return api.GetRss2PdsPlugin().FeedManager.AddFeed( feedConfig );
         }

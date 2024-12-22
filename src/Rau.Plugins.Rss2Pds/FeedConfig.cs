@@ -23,13 +23,26 @@ namespace Rau.Plugins.Rss2Pds
     /// handle.
     /// </summary>
     /// <param name="FeedUrl">The feed URL.</param>
-    /// <param name="Handle">The handle to post RSS messages to.</param>
+    /// <param name="Handle">The PDS handle to post RSS messages to.</param>
     /// <param name="Password">The app password to use.</param>
+    /// <param name="pdsInstanceUrl">
+    /// The instance of the PDS to login to.
+    /// </param>
     /// <param name="CronString">How often to check for RSS updates.</param>
     /// <param name="HashTags">
     /// HashTags to add to the end of the message.
     /// Note, hashtags will be counted against the post's character limit.
     /// Adding too many will make posts be cut-off to make room.
+    /// 
+    /// Do *NOT* include the '#' in front, or the hashtag will end up starting with "##".
+    /// In otherwords, the '#' is added automatically.
+    /// </param>
+    /// <param name="Languages">
+    /// The languages that we should post in.  If set to null,
+    /// the default behavior is to used, which is to use the feed's language first,
+    /// falling back to the default languages specified in
+    /// <see cref="Standard.Configuration.RauConfig.DefaultLanguages"/> if the feed
+    /// does not specify a language.
     /// </param>
     /// <param name="AlertThreshold">
     /// How many failed scrapes in a row must happen
@@ -51,9 +64,11 @@ namespace Rau.Plugins.Rss2Pds
         Uri FeedUrl,
         string Handle,
         string Password,
+        Uri PdsInstanceUrl,
         string CronString,
         IEnumerable<string>? HashTags,
         uint? AlertThreshold,
+        IEnumerable<string>? Languages = null,
         bool InitializeOnStartUp = true
     );
 }

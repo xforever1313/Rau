@@ -50,7 +50,7 @@ namespace Rau.Plugins.Rss2Pds
                 feed
             );
 
-            var e = new FeedUpdateEvent( this.api, feedReader );
+            var e = new FeedUpdateEvent( feedReader );
             if( feed.InitializeOnStartUp )
             {
                 var args = new ScheduledEventArgs

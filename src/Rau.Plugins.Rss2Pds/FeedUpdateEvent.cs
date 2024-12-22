@@ -26,8 +26,6 @@ namespace Rau.Plugins.Rss2Pds
     {
         // ---------------- Fields ----------------
 
-        private readonly IRauApi api;
-
         private readonly FeedReader feedReader;
 
         private uint failedFetches;
@@ -35,9 +33,8 @@ namespace Rau.Plugins.Rss2Pds
 
         // ---------------- Constructor ----------------
 
-        public FeedUpdateEvent( IRauApi api, FeedReader feedReder )
+        public FeedUpdateEvent( FeedReader feedReder )
         {
-            this.api = api;
             this.feedReader = feedReder;
 
             this.failedFetches = 0;
@@ -51,14 +48,30 @@ namespace Rau.Plugins.Rss2Pds
 
         public override async Task ExecuteEvent( IScheduledEventParameters eventParams )
         {
+            IRauApi api = eventParams.Api;
+
             try
             {
-                this.api.Logger.Information( $"Checking feed for updates: {this.feedReader.FeedConfig.FeedUrl}" );
+                api.Logger.Information( $"Checking feed for updates: {this.feedReader.FeedConfig.FeedUrl}" );
                 List<SyndicationItem> updatedItems = await this.feedReader.UpdateAsync();
 
                 if( updatedItems.Count == 0 )
                 {
-                    this.api.Logger.Information( $"No new items found in feed: {this.feedReader.FeedConfig.FeedUrl}" );
+                    api.Logger.Information( $"No new items found in feed: {this.feedReader.FeedConfig.FeedUrl}" );
+                }
+                else
+                {
+                    var account = new PdsAccount
+                    {
+                        Instance = feedReader.FeedConfig.PdsInstanceUrl,
+                        UserName = feedReader.FeedConfig.Handle,
+                        Password = feedReader.FeedConfig.Password
+                    };
+
+                    foreach( SyndicationItem item in updatedItems )
+                    {
+                        PdsPost post = item.GeneratePost( this.feedReader, eventParams.Api.Config );
+                    }
                 }
 
                 this.failedFetches = 0;
@@ -72,14 +85,14 @@ namespace Rau.Plugins.Rss2Pds
                     ( alerted == false )
                 )
                 {
-                    this.api.Logger.Warning(
+                    api.Logger.Warning(
                         $"Unable to fetch feed '{this.feedReader.FeedConfig.FeedUrl}' after {this.feedReader.FeedConfig.AlertThreshold} attempts.  Most recent exception: {Environment.NewLine}{e}"
                     );
                     this.alerted = true;
                 }
                 else
                 {
-                    this.api.Logger.Debug(
+                    api.Logger.Debug(
                         $"Error when fetching feed: {this.feedReader.FeedConfig.FeedUrl}{Environment.NewLine}{e}"
                     );
                 }

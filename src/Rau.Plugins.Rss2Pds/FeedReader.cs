@@ -16,18 +16,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.ServiceModel.Syndication;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
-using Rau.Standard.Logging;
 
 namespace Rau.Plugins.Rss2Pds
 {
-    internal sealed class FeedReader
+    internal sealed class FeedReader : IFeedReader
     {
         // ---------------- Fields ----------------
 
@@ -57,6 +51,8 @@ namespace Rau.Plugins.Rss2Pds
         public FeedConfig FeedConfig { get; }
 
         public string FeedTitle { get; private set; }
+
+        public string? FeedLanguage { get; private set; }
 
         // ---------------- Methods ----------------
 
@@ -109,23 +105,13 @@ namespace Rau.Plugins.Rss2Pds
             {
                 if( this.feedCache is null )
                 {
-                    // If we are null, we have not gotten any updatedFeed data yet.
-                    // Therefore, do not add any new items as we do not want to spam
-                    // channels.
-                    //
-                    // This can happen if when the IRC bot starts up, the URL to get the
-                    // updatedFeed is down during initialization, so we get nothing.
-
                     this.feedCache = latestFeed;
-                    this.FeedTitle = this.feedCache.Title.Text;
                 }
                 else
                 {
                     // If our updatedFeed is not null, then we have at least 1 update.
-                    // we can post to channels any new updates.
                     foreach( SyndicationItem item in latestFeed.Items )
                     {
-                        // If our item does not exist, call OnNewItem.
                         if( this.feedCache.Items.FirstOrDefault( i => i.Id == item.Id ) == null )
                         {
                             newItems.Add( item );
@@ -133,6 +119,9 @@ namespace Rau.Plugins.Rss2Pds
                     }
                     this.feedCache = latestFeed;
                 }
+
+                this.FeedTitle = this.feedCache.Title.Text;
+                this.FeedLanguage = this.feedCache.Language;
             }
 
             newItems.Sort( SortByDate );

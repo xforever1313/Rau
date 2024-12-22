@@ -16,6 +16,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
+using System.Globalization;
+
 namespace Rau.Standard.Configuration
 {
     public record class RauConfig
@@ -72,5 +74,26 @@ namespace Rau.Standard.Configuration
         /// The version to use when posting to the PDS.
         /// </summary>
         public Version? UserAgentVersion { get; init; }
+
+        /// <summary>
+        /// The default language to use on posts if not specified.
+        /// If set to null, the System's language is used,
+        /// which is specified via <see cref="CultureInfo.CurrentCulture"/>.
+        /// </summary>
+        public IReadOnlyCollection<string>? DefaultLanguages { get; init; } = null;
+
+        // ---------------- Methods ----------------
+
+        public IReadOnlyCollection<string> GetDefaultLanguages()
+        {
+            if( this.DefaultLanguages is null )
+            {
+                return [CultureInfo.CurrentCulture.Name];
+            }
+            else
+            {
+                return this.DefaultLanguages;
+            }
+        }
     }
 }

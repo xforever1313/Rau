@@ -25,9 +25,9 @@ namespace Rau.Tests.Rau.Standard
     public sealed class RauConfigTests
     {
         // ---------------- Tests ----------------
-        
+
         // -------- Validation Tests --------
-        
+
         /// <summary>
         /// Ensures the default configuration object
         /// validates.
@@ -41,12 +41,12 @@ namespace Rau.Tests.Rau.Standard
                 null,
                 new Version( 1, 2, 3 )
             };
-            
+
             // Act / Check
             foreach( Version? version in versionsToTest )
             {
                 var uut = new RauConfig( version );
-                
+
                 uut.Validate(); // Should not throw.
             }
         }
@@ -70,11 +70,11 @@ namespace Rau.Tests.Rau.Standard
                 {
                     CharacterLimit = value
                 };
-                
+
                 uut.Validate();
             }
         }
-        
+
         /// <summary>
         /// Ensures invalid characters results in a validation error.
         /// </summary>
@@ -113,7 +113,7 @@ namespace Rau.Tests.Rau.Standard
                 null,
                 new FileInfo( "log.txt" )
             };
-            
+
             // Act / Check
             foreach( FileInfo? value in validValues )
             {
@@ -121,7 +121,7 @@ namespace Rau.Tests.Rau.Standard
                 {
                     LogFile = value
                 };
-                
+
                 uut.Validate();
             }
         }
@@ -145,7 +145,7 @@ namespace Rau.Tests.Rau.Standard
                 9100,
                 ushort.MaxValue
             };
-            
+
             // Act / Check
             foreach( ushort? value in validValues )
             {
@@ -153,11 +153,11 @@ namespace Rau.Tests.Rau.Standard
                 {
                     MetricsPort = value
                 };
-                
+
                 uut.Validate();
             }
         }
-        
+
         /// <summary>
         /// Ensures invalid metrics ports result in an invalid
         /// error.
@@ -170,7 +170,7 @@ namespace Rau.Tests.Rau.Standard
             {
                 0
             };
-            
+
             // Act / Check
             foreach( ushort? value in validValues )
             {
@@ -198,7 +198,7 @@ namespace Rau.Tests.Rau.Standard
                 TelegramBotToken = "000000000:AAAAAAaAAa2AaAAaoAAAA-a_aaAAaAaaaAA",
                 TelegramChatId = "-0000000000000"
             };
-            
+
             // Act / Check
             uut.Validate();
         }
@@ -216,21 +216,21 @@ namespace Rau.Tests.Rau.Standard
                 TelegramChatId = null
             };
             Assert.ThrowsException<ListedValidationException>( () => uut.Validate() );
-            
+
             uut = new RauConfig( null )
             {
                 TelegramBotToken = "000000000:AAAAAAaAAa2AaAAaoAAAA-a_aaAAaAaaaAA",
                 TelegramChatId = ""
             };
             Assert.ThrowsException<ListedValidationException>( () => uut.Validate() );
-            
+
             uut = new RauConfig( null )
             {
                 TelegramBotToken = null,
                 TelegramChatId = "-0000000000000"
             };
             Assert.ThrowsException<ListedValidationException>( () => uut.Validate() );
-            
+
             uut = new RauConfig( null )
             {
                 TelegramBotToken = "",
@@ -255,11 +255,11 @@ namespace Rau.Tests.Rau.Standard
                 {
                     UserAgentName = value
                 };
-                
+
                 uut.Validate();
             }
         }
-        
+
         [TestMethod]
         public void InvalidUserAgentTest()
         {
@@ -283,7 +283,7 @@ namespace Rau.Tests.Rau.Standard
                 );
             }
         }
-        
+
         [TestMethod]
         public void ValidUserAgentVersionTest()
         {
@@ -291,7 +291,7 @@ namespace Rau.Tests.Rau.Standard
             var validUserAgents = new Version?[]
             {
                 null,
-                new Version(1, 2, 3)
+                new Version( 1, 2, 3 )
             };
 
             // Act / Check
@@ -301,7 +301,7 @@ namespace Rau.Tests.Rau.Standard
                 {
                     UserAgentVersion = value
                 };
-                
+
                 uut.Validate();
             }
         }

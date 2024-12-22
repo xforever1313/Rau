@@ -19,16 +19,33 @@
 namespace Rau.Plugins.Rss2Pds
 {
     /// <summary>
-    /// 
+    /// A feed that the bot will scrape and post updates to the given
+    /// handle.
     /// </summary>
     /// <param name="FeedUrl">The feed URL.</param>
     /// <param name="Handle">The handle to post RSS messages to.</param>
     /// <param name="Password">The app password to use.</param>
     /// <param name="CronString">How often to check for RSS updates.</param>
-    /// <param name="HashTags">HashTags to add to the end of the message.</param>
+    /// <param name="HashTags">
+    /// HashTags to add to the end of the message.
+    /// Note, hashtags will be counted against the post's character limit.
+    /// Adding too many will make posts be cut-off to make room.
+    /// </param>
     /// <param name="AlertThreshold">
     /// How many failed scrapes in a row must happen
     /// before an error message is logged.
+    /// </param>
+    /// <param name="InitializeOnStartUp">
+    /// If set to true, the initial cache of the feed is downloaded
+    /// when the plugin is initialized.
+    /// 
+    /// If set to false, it means the first time the cron string elapses,
+    /// no posts will be sent to the PDS 
+    /// as the feed cache must be initialzied first.
+    /// 
+    /// A good rule of thumb is to set to true if a startup penality is 
+    /// not a big deal, and the feed isn't updated that often.  Set to false
+    /// if the feed is updated fairly often, or you do not want a startup penalty.
     /// </param>
     public sealed record class FeedConfig(
         Uri FeedUrl,
@@ -36,6 +53,7 @@ namespace Rau.Plugins.Rss2Pds
         string Password,
         string CronString,
         IEnumerable<string>? HashTags,
-        uint? AlertThreshold
+        uint? AlertThreshold,
+        bool InitializeOnStartUp = true
     );
 }

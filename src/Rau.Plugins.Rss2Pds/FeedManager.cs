@@ -17,6 +17,7 @@
 //
 
 using Rau.Standard;
+using Rau.Standard.EventScheduler;
 
 namespace Rau.Plugins.Rss2Pds
 {
@@ -24,16 +25,19 @@ namespace Rau.Plugins.Rss2Pds
     {
         // ---------------- Fields ----------------
 
-        private readonly Dictionary<int, FeedConfig> feeds;
+        private readonly Dictionary<int, FeedReader> feeds;
+
+        private readonly HttpClient httpClient;
 
         private readonly IRauApi api;
 
         // ---------------- Constructor ----------------
 
-        public FeedManager( IRauApi api )
+        public FeedManager( HttpClient client, IRauApi api )
         {
-            this.feeds = new Dictionary<int, FeedConfig>();
+            this.feeds = new Dictionary<int, FeedReader>();
 
+            this.httpClient = client;
             this.api = api;
         }
 
@@ -41,15 +45,56 @@ namespace Rau.Plugins.Rss2Pds
 
         public int AddFeed( FeedConfig feed )
         {
-            return 0;
+            var feedReader = new FeedReader(
+                this.httpClient,
+                feed
+            );
+
+            var e = new FeedUpdateEvent( this.api, feedReader );
+            if( feed.InitializeOnStartUp )
+            {
+                var args = new ScheduledEventArgs
+                {
+                    Api = api,
+                    CancellationToken = CancellationToken.None,
+                    FireTimeUtc = this.api.DateTime.UtcNow
+                };
+                e.ExecuteEvent( args ).Wait();
+            }
+
+            int feedId = this.api.EventScheduler.ConfigureEvent( e );
+
+            this.feeds.Add( feedId, feedReader );
+
+            return feedId;
         }
 
         public void RemoveFeed( int feedId )
         {
             if( this.feeds.ContainsKey( feedId ) )
             {
+                this.api.EventScheduler.RemoveEvent( feedId );
                 this.feeds.Remove( feedId );
             }
+        }
+
+        internal void RemoveAllFeeds()
+        {
+            foreach( int feedId in this.feeds.Keys.ToArray() )
+            {
+                RemoveFeed( feedId );
+            }
+        }
+
+        // ----------------- Helper Classes ----------------
+
+        private record class ScheduledEventArgs : IScheduledEventParameters
+        {
+            public required IRauApi Api { get; init; }
+
+            public required DateTimeOffset FireTimeUtc { get; init; }
+
+            public required CancellationToken CancellationToken { get; init; }
         }
     }
 }

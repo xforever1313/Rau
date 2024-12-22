@@ -16,6 +16,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
+using System.Net.Http.Headers;
 using Rau.Standard;
 using Rau.Standard.Configuration;
 
@@ -32,6 +33,8 @@ namespace Rau.Plugins.Rss2Pds
 
         public static readonly Guid PluginGuid = Guid.Parse( PluginId );
 
+        private readonly HttpClient httpClient;
+
         private IRauApi? api;
 
         private FeedManager? feedManager;
@@ -41,6 +44,12 @@ namespace Rau.Plugins.Rss2Pds
         public Rss2PdsPlugin()
         {
             this.PluginVersion = GetType().Assembly.GetName().Version ?? new Version( 0, 0, 0 );
+            this.httpClient = new HttpClient();
+
+            this.httpClient.DefaultRequestHeaders.UserAgent.Clear();
+            this.httpClient.DefaultRequestHeaders.UserAgent.Add(
+                new ProductInfoHeaderValue( "Rau.Plugins.Rss2Pds", this.PluginVersion.ToString( 3 ) )
+            );
         }
 
         // ---------------- Properties ----------------
@@ -72,11 +81,13 @@ namespace Rau.Plugins.Rss2Pds
         public void Initialize( IRauApi api )
         {
             this.api = api;
-            this.feedManager = new FeedManager( this.api );
+            this.feedManager = new FeedManager( this.httpClient, this.api );
         }
 
         public void Dispose()
         {
+            this.feedManager?.RemoveAllFeeds();
+            this.feedManager = null;
             this.api = null;
         }
     }

@@ -16,7 +16,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-using System.Collections.Immutable;
 using System.ServiceModel.Syndication;
 using System.Text;
 using Rau.Standard;
@@ -33,36 +32,63 @@ namespace Rau.Plugins.Rss2Pds
         )
         {
             Uri? url = null;
-            string message;
             if( item.Links.Count > 0 )
             {
                 url = item.Links.First().Uri;
-                message = $"{feedReader.FeedTitle}: '{item.Title.Text}'{Environment.NewLine}{url}";
-            }
-            else
-            {
-                message = $"{feedReader.FeedTitle}: '{item.Title.Text}'";
             }
 
-            var builder = new StringBuilder();
+            string titlePortion = $"{feedReader.FeedTitle}: ";
+
+            var postContents = new StringBuilder();
+
+            bool firstHastag = true;
             foreach( string hashTag in feedReader.FeedConfig.HashTags ?? [] )
             {
-                builder.Append( " " + hashTag );
+                if( firstHastag )
+                {
+                    postContents.AppendLine();
+                    postContents.AppendLine();
+                    postContents.Append( "#" + hashTag );
+
+                    firstHastag = false;
+                }
+                else
+                {
+                    postContents.Append( " #" + hashTag );
+                }
             }
+
+            long charactersRemaining = rauConfig.CharacterLimit - postContents.Length;
+            if( charactersRemaining <= 0 )
+            {
+                // If there are too many hashtags, clear them out.
+                // The contents of the feed are more important.
+                postContents.Clear();
+                charactersRemaining = rauConfig.CharacterLimit;
+            }
+            
+            if( ( titlePortion.Length + item.Title.Text.Length ) > charactersRemaining )
+            {
+                // If there isn't enough characters for the title, clear them out.
+                // Item title is most important.
+                titlePortion = "";
+            }
+
+            string message = titlePortion + item.Title.Text;
 
             for(
                 int i = 0;
-                ( i < message.Length ) && ( builder.Length < rauConfig.CharacterLimit );
+                ( i < message.Length ) && ( postContents.Length < rauConfig.CharacterLimit );
                 ++i
             )
             {
-                builder.Insert( i, message[i] );
+                postContents.Insert( i, message[i] );
             }
 
             return new PdsPost
             {
                 PostAttachmentPage = url,
-                PostContents = message,
+                PostContents = postContents.ToString(),
                 Languages = GetLanguages( feedReader.FeedLanguage, rauConfig )
             };
         }
@@ -75,7 +101,7 @@ namespace Rau.Plugins.Rss2Pds
             }
             else
             {
-                return ImmutableArray.Create( feedLanguage );
+                return [feedLanguage];
             }
         }
     }

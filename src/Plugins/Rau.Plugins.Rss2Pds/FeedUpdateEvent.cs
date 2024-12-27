@@ -71,6 +71,7 @@ namespace Rau.Plugins.Rss2Pds
                     foreach( SyndicationItem item in updatedItems )
                     {
                         PdsPost post = item.GeneratePost( this.feedReader, eventParams.Api.Config );
+                        await eventParams.Api.PdsPoster.Post( account, post );
                     }
                 }
 

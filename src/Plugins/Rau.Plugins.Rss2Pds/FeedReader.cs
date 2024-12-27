@@ -97,7 +97,7 @@ namespace Rau.Plugins.Rss2Pds
 
         private List<SyndicationItem> SortFeeds( SyndicationFeed latestFeed )
         {
-            List<SyndicationItem> newItems = new List<SyndicationItem>();
+            var newItems = new List<SyndicationItem>();
 
             // this.updatedFeed can be modified by multiple threads if UpdateAsync() is called multiple times...
             // lock it up.
@@ -130,7 +130,7 @@ namespace Rau.Plugins.Rss2Pds
 
         private static int SortByDate( SyndicationItem item1, SyndicationItem item2 )
         {
-            return item1.LastUpdatedTime.CompareTo( item2.LastUpdatedTime );
+            return item1.PublishDate.CompareTo( item2.PublishDate );
         }
     }
 }

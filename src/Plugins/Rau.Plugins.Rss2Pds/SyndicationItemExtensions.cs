@@ -89,19 +89,26 @@ namespace Rau.Plugins.Rss2Pds
             {
                 PostAttachmentPage = url,
                 PostContents = postContents.ToString(),
-                Languages = GetLanguages( feedReader.FeedLanguage, rauConfig )
+                Languages = GetLanguages( feedReader, rauConfig )
             };
         }
 
-        private static IReadOnlyCollection<string> GetLanguages( string? feedLanguage, RauConfig config )
+        private static IEnumerable<string> GetLanguages( IFeedReader feedReader, RauConfig config )
         {
-            if( string.IsNullOrWhiteSpace( feedLanguage ) )
+            if( feedReader.FeedConfig.Languages is null )
             {
-                return config.GetDefaultLanguages();
+                if( string.IsNullOrWhiteSpace( feedReader.FeedLanguage ) )
+                {
+                    return config.GetDefaultLanguages();
+                }
+                else
+                {
+                    return [feedReader.FeedLanguage];
+                }
             }
             else
             {
-                return [feedLanguage];
+                return feedReader.FeedConfig.Languages;
             }
         }
     }

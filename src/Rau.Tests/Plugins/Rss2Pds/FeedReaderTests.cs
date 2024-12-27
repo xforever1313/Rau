@@ -238,5 +238,217 @@ namespace Rau.Tests.Plugins.Rss2Pds
             PdsPost post = firstPass[0].GeneratePost( uut, rauConfig );
             AssertEx.ArePdsPostsEqual( expectedPost, post );
         }
+        
+        [TestMethod]
+        public void RitlugLatest()
+        { 
+            // Setup
+            const string initialRocLongboardingFeed = 
+@"<?xml version=""1.0"" encoding=""UTF-8""?>
+<rss version=""2.0"" xmlns:atom=""http://www.w3.org/2005/Atom"">
+  <channel>
+    <title>RIT Linux Users Group</title>
+    <description>RIT Linux Users Group Announcements</description>
+    <link>https://ritlug.com/</link>
+    <atom:link href=""https://ritlug.com/feed.xml"" rel=""self"" type=""application/rss+xml"" />
+    <pubDate>Fri, 06 Dec 2024 16:47:13 +0000</pubDate>
+    <lastBuildDate>Fri, 06 Dec 2024 16:47:13 +0000</lastBuildDate>
+    <generator>Jekyll v3.10.0</generator>    
+      <item>
+        <title>Week #12: Lightning Talks</title>
+        <description>&lt;p&gt;Hi everyone!&lt;/p&gt;
+
+&lt;p&gt;This week, we are doing lightning talks! Anyone is free to bring a 5-10 minute presentation about any topic they’d like - it could be FOSS/Linux related but does not have to. No need to let us know ahead of time, and if you need a computer or adapter to present we would be happy to provide one.&lt;/p&gt;
+
+&lt;p&gt;See you all there!&lt;/p&gt;
+</description>
+        <pubDate>Fri, 15 Nov 2024 00:00:00 +0000</pubDate>
+        <link>https://ritlug.com/announcements/2024/11/15/lightning_talks/</link>
+        <guid isPermaLink=""true"">https://ritlug.com/announcements/2024/11/15/lightning_talks/</guid>
+        
+        
+        <category>announcements</category>
+        
+      </item>
+</channel>
+</rss>
+";
+
+            const string updatedFeed = 
+@"<?xml version=""1.0"" encoding=""UTF-8""?>
+<rss version=""2.0"" xmlns:atom=""http://www.w3.org/2005/Atom"">
+  <channel>
+    <title>RIT Linux Users Group</title>
+    <description>RIT Linux Users Group Announcements</description>
+    <link>https://ritlug.com/</link>
+    <atom:link href=""https://ritlug.com/feed.xml"" rel=""self"" type=""application/rss+xml"" />
+    <pubDate>Fri, 06 Dec 2024 16:47:13 +0000</pubDate>
+    <lastBuildDate>Fri, 06 Dec 2024 16:47:13 +0000</lastBuildDate>
+    <generator>Jekyll v3.10.0</generator>
+    
+      <item>
+        <title>Week #14: End of Semester</title>
+        <description>&lt;p&gt;Hi everyone!&lt;/p&gt;
+
+&lt;p&gt;With finals coming up, this week’s meeting will be more focused on hanging out; there will be no talk today. As usual, we will meet today at 4:30 - 6:00 PM in GOL-2455. Thanks to everyone who came to meetings this semester, and an extra thanks to everyone who presented!&lt;/p&gt;
+
+&lt;p&gt;See you there!&lt;/p&gt;
+</description>
+        <pubDate>Fri, 06 Dec 2024 00:00:00 +0000</pubDate>
+        <link>https://ritlug.com/announcements/2024/12/06/end_of_semester/</link>
+        <guid isPermaLink=""true"">https://ritlug.com/announcements/2024/12/06/end_of_semester/</guid>
+        
+        
+        <category>announcements</category>
+        
+      </item>
+    
+      <item>
+        <title>Week #13: Bootstrapping</title>
+        <description>&lt;p&gt;Hi everyone!&lt;/p&gt;
+
+&lt;p&gt;This week Ryan will be giving a talk about software bootstrapping, reproducibility, and why those are hard problems.&lt;/p&gt;
+
+&lt;p&gt;See you all there!&lt;/p&gt;
+</description>
+        <pubDate>Fri, 22 Nov 2024 00:00:00 +0000</pubDate>
+        <link>https://ritlug.com/announcements/2024/11/22/bootstrapping/</link>
+        <guid isPermaLink=""true"">https://ritlug.com/announcements/2024/11/22/bootstrapping/</guid>
+        
+        
+        <category>announcements</category>
+        
+      </item>
+    
+      <item>
+        <title>Week #12: Lightning Talks</title>
+        <description>&lt;p&gt;Hi everyone!&lt;/p&gt;
+
+&lt;p&gt;This week, we are doing lightning talks! Anyone is free to bring a 5-10 minute presentation about any topic they’d like - it could be FOSS/Linux related but does not have to. No need to let us know ahead of time, and if you need a computer or adapter to present we would be happy to provide one.&lt;/p&gt;
+
+&lt;p&gt;See you all there!&lt;/p&gt;
+</description>
+        <pubDate>Fri, 15 Nov 2024 00:00:00 +0000</pubDate>
+        <link>https://ritlug.com/announcements/2024/11/15/lightning_talks/</link>
+        <guid isPermaLink=""true"">https://ritlug.com/announcements/2024/11/15/lightning_talks/</guid>
+        
+        
+        <category>announcements</category>
+        
+      </item>
+</channel>
+</rss>
+";
+
+            const string missingPost = 
+@"<?xml version=""1.0"" encoding=""UTF-8""?>
+<rss version=""2.0"" xmlns:atom=""http://www.w3.org/2005/Atom"">
+  <channel>
+    <title>RIT Linux Users Group</title>
+    <description>RIT Linux Users Group Announcements</description>
+    <link>https://ritlug.com/</link>
+    <atom:link href=""https://ritlug.com/feed.xml"" rel=""self"" type=""application/rss+xml"" />
+    <pubDate>Fri, 06 Dec 2024 16:47:13 +0000</pubDate>
+    <lastBuildDate>Fri, 06 Dec 2024 16:47:13 +0000</lastBuildDate>
+    <generator>Jekyll v3.10.0</generator>
+    
+      <item>
+        <title>Week #14: End of Semester</title>
+        <description>&lt;p&gt;Hi everyone!&lt;/p&gt;
+
+&lt;p&gt;With finals coming up, this week’s meeting will be more focused on hanging out; there will be no talk today. As usual, we will meet today at 4:30 - 6:00 PM in GOL-2455. Thanks to everyone who came to meetings this semester, and an extra thanks to everyone who presented!&lt;/p&gt;
+
+&lt;p&gt;See you there!&lt;/p&gt;
+</description>
+        <pubDate>Fri, 06 Dec 2024 00:00:00 +0000</pubDate>
+        <link>https://ritlug.com/announcements/2024/12/06/end_of_semester/</link>
+        <guid isPermaLink=""true"">https://ritlug.com/announcements/2024/12/06/end_of_semester/</guid>
+        
+        
+        <category>announcements</category>
+        
+      </item>
+    
+      <item>
+        <title>Week #13: Bootstrapping</title>
+        <description>&lt;p&gt;Hi everyone!&lt;/p&gt;
+
+&lt;p&gt;This week Ryan will be giving a talk about software bootstrapping, reproducibility, and why those are hard problems.&lt;/p&gt;
+
+&lt;p&gt;See you all there!&lt;/p&gt;
+</description>
+        <pubDate>Fri, 22 Nov 2024 00:00:00 +0000</pubDate>
+        <link>https://ritlug.com/announcements/2024/11/22/bootstrapping/</link>
+        <guid isPermaLink=""true"">https://ritlug.com/announcements/2024/11/22/bootstrapping/</guid>
+        
+        
+        <category>announcements</category>
+        
+      </item>
+</channel>
+</rss>";
+        
+            string fileLocation = Path.Combine( testDir.FullName, "RitLugLatest.xml" );
+            Uri url = new Uri( SethPath.ToUri( fileLocation ) );
+
+            var rauConfig = new RauConfig( null )
+            {
+                DefaultLanguages = new List<string>() { "en-US" }
+            };
+            
+            var config = new FeedConfig(
+                url,
+                "ritlug.com",
+                "SomePassword",
+                new Uri( "https://at.shendrick.net" ),
+                "0 0 * * * ?",
+                null,
+                null,
+                ["en-GB"],
+                true
+            );
+            
+            var uut = new FeedReader( Client, config );
+            
+            // Act
+            File.WriteAllText( fileLocation, initialRocLongboardingFeed );
+            uut.Initialize();
+            
+            File.WriteAllText( fileLocation, updatedFeed );
+            List<SyndicationItem> firstPass = uut.UpdateAsync().Result;
+            List<SyndicationItem> secondPass = uut.UpdateAsync().Result;
+
+            File.WriteAllText( fileLocation, missingPost );
+            List<SyndicationItem> passWithMissingPost = uut.UpdateAsync().Result;
+            
+            // Check
+            Assert.AreEqual(
+                "RIT Linux Users Group",
+                uut.FeedTitle
+            );
+            Assert.IsNull( uut.FeedLanguage ); // No language specified.  Leave null.
+            
+            Assert.AreEqual( 2, firstPass.Count );
+            Assert.AreEqual( 0, secondPass.Count );
+            Assert.AreEqual( 0, passWithMissingPost.Count );
+
+            var expectedPost1 = new PdsPost
+            {
+                Languages = ["en-GB"],
+                PostAttachmentPage = new Uri( "https://ritlug.com/announcements/2024/11/22/bootstrapping/" ),
+                PostContents = "RIT Linux Users Group: Week #13: Bootstrapping"
+            };
+            PdsPost post1 = firstPass[0].GeneratePost( uut, rauConfig );
+            AssertEx.ArePdsPostsEqual( expectedPost1, post1 );
+            
+            var expectedPost2 = new PdsPost
+            {
+                Languages = ["en-GB"],
+                PostAttachmentPage = new Uri( "https://ritlug.com/announcements/2024/12/06/end_of_semester/" ),
+                PostContents = "RIT Linux Users Group: Week #14: End of Semester"
+            };
+            PdsPost post2 = firstPass[1].GeneratePost( uut, rauConfig );
+            AssertEx.ArePdsPostsEqual( expectedPost2, post2 );
+        }
     }
 }

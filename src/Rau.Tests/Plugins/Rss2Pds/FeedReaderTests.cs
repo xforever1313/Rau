@@ -239,11 +239,14 @@ namespace Rau.Tests.Plugins.Rss2Pds
             AssertEx.ArePdsPostsEqual( expectedPost, post );
         }
         
+        /// <summary>
+        /// Tests an ATOM feed with no language specified.
+        /// </summary>
         [TestMethod]
         public void RitlugLatest()
         { 
             // Setup
-            const string initialRocLongboardingFeed = 
+            const string initialFeed = 
 @"<?xml version=""1.0"" encoding=""UTF-8""?>
 <rss version=""2.0"" xmlns:atom=""http://www.w3.org/2005/Atom"">
   <channel>
@@ -411,7 +414,7 @@ namespace Rau.Tests.Plugins.Rss2Pds
             var uut = new FeedReader( Client, config );
             
             // Act
-            File.WriteAllText( fileLocation, initialRocLongboardingFeed );
+            File.WriteAllText( fileLocation, initialFeed );
             uut.Initialize();
             
             File.WriteAllText( fileLocation, updatedFeed );
@@ -449,6 +452,246 @@ namespace Rau.Tests.Plugins.Rss2Pds
             };
             PdsPost post2 = firstPass[1].GeneratePost( uut, rauConfig );
             AssertEx.ArePdsPostsEqual( expectedPost2, post2 );
+        }
+        
+        /// <summary>
+        /// Tests what happens if a post appears with
+        /// the date in between already cached posts.
+        /// </summary>
+        [TestMethod]
+        public void RitlugRedditLatest()
+        { 
+            // Setup
+            const string initialFeed = 
+@"<?xml version=""1.0"" encoding=""UTF-8""?>
+<feed xmlns=""http://www.w3.org/2005/Atom"" xmlns:media=""http://search.yahoo.com/mrss/"">
+  <category term=""RITLUG"" label=""r/RITLUG""/>
+  <updated>2024-12-27T02:41:43+00:00</updated>
+  <icon>https://www.redditstatic.com/icon.png/</icon>
+  <id>/r/ritlug/.rss</id>
+  <link rel=""self"" href=""https://old.reddit.com/r/ritlug/.rss"" type=""application/atom+xml""/>
+  <link rel=""alternate"" href=""https://old.reddit.com/r/ritlug/"" type=""text/html""/>
+  <subtitle>The official subreddit for the RIT Linux Users Group, RITlug! All announcements and club-related discussions take place on our various chat channels.</subtitle>
+  <title>RIT Linux Users Group</title>
+  <entry>
+    <author>
+      <name>/u/ryan77627</name>
+      <uri>https://old.reddit.com/user/ryan77627</uri>
+    </author>
+    <category term=""RITLUG"" label=""r/RITLUG""/>
+    <content type=""html"">Where to find us!</content>
+    <id>t3_10kg65u</id>
+    <link href=""https://old.reddit.com/r/RITLUG/comments/10kg65u/where_to_find_us_links/""/>
+    <updated>2023-01-24T21:02:43+00:00</updated>
+    <published>2023-01-24T21:02:43+00:00</published>
+    <title>Where to find us + Links</title>
+  </entry>
+  <entry>
+    <author>
+      <name>/u/ritlug</name>
+      <uri>https://old.reddit.com/user/ritlug</uri>
+    </author>
+    <category term=""RITLUG"" label=""r/RITLUG""/>
+    <content type=""html"">Week 14!</content>
+    <id>t3_35aov1</id>
+    <media:thumbnail url=""https://external-preview.redd.it/XltUh1UUqG8HkKRf4HXGFOQaOrJzsE3lY7Uyl1JlaXs.jpg?width=108&amp;crop=smart&amp;auto=webp&amp;s=b0bf86abc594a5ecdac465ac3028b58f1e454e95""/>
+    <link href=""https://old.reddit.com/r/RITLUG/comments/35aov1/week_14_meeting_last_one/""/>
+    <updated>2015-05-08T15:00:24+00:00</updated>
+    <published>2015-05-08T15:00:24+00:00</published>
+    <title>Week 14 Meeting (Last One!)</title>
+  </entry>
+  <entry>
+    <author>
+      <name>/u/ritlug</name>
+      <uri>https://old.reddit.com/user/ritlug</uri>
+    </author>
+    <category term=""RITLUG"" label=""r/RITLUG""/>
+    <content type=""html"">Week 8</content>
+    <id>t3_2zmtur</id>
+    <media:thumbnail url=""https://external-preview.redd.it/XltUh1UUqG8HkKRf4HXGFOQaOrJzsE3lY7Uyl1JlaXs.jpg?width=108&amp;crop=smart&amp;auto=webp&amp;s=b0bf86abc594a5ecdac465ac3028b58f1e454e95""/>
+    <link href=""https://old.reddit.com/r/RITLUG/comments/2zmtur/week_8_meeting_imagine_rit/""/>
+    <updated>2015-03-19T22:06:44+00:00</updated>
+    <published>2015-03-19T22:06:44+00:00</published>
+    <title>Week 8 Meeting (Imagine RIT)</title>
+  </entry>
+</feed>
+";
+
+            const string updatedFeed = 
+@"<?xml version=""1.0"" encoding=""UTF-8""?>
+<feed xmlns=""http://www.w3.org/2005/Atom"" xmlns:media=""http://search.yahoo.com/mrss/"">
+  <category term=""RITLUG"" label=""r/RITLUG""/>
+  <updated>2024-12-27T02:41:43+00:00</updated>
+  <icon>https://www.redditstatic.com/icon.png/</icon>
+  <id>/r/ritlug/.rss</id>
+  <link rel=""self"" href=""https://old.reddit.com/r/ritlug/.rss"" type=""application/atom+xml""/>
+  <link rel=""alternate"" href=""https://old.reddit.com/r/ritlug/"" type=""text/html""/>
+  <subtitle>The official subreddit for the RIT Linux Users Group, RITlug! All announcements and club-related discussions take place on our various chat channels.</subtitle>
+  <title>RIT Linux Users Group</title>
+  <entry>
+    <author>
+      <name>/u/ryan77627</name>
+      <uri>https://old.reddit.com/user/ryan77627</uri>
+    </author>
+    <category term=""RITLUG"" label=""r/RITLUG""/>
+    <content type=""html"">Where to find us!</content>
+    <id>t3_10kg65u</id>
+    <link href=""https://old.reddit.com/r/RITLUG/comments/10kg65u/where_to_find_us_links/""/>
+    <updated>2023-01-24T21:02:43+00:00</updated>
+    <published>2023-01-24T21:02:43+00:00</published>
+    <title>Where to find us + Links</title>
+  </entry>
+  <entry>
+    <author>
+      <name>/u/ritlug</name>
+      <uri>https://old.reddit.com/user/ritlug</uri>
+    </author>
+    <category term=""RITLUG"" label=""r/RITLUG""/>
+    <content type=""html"">Week 14!</content>
+    <id>t3_35aov1</id>
+    <media:thumbnail url=""https://external-preview.redd.it/XltUh1UUqG8HkKRf4HXGFOQaOrJzsE3lY7Uyl1JlaXs.jpg?width=108&amp;crop=smart&amp;auto=webp&amp;s=b0bf86abc594a5ecdac465ac3028b58f1e454e95""/>
+    <link href=""https://old.reddit.com/r/RITLUG/comments/35aov1/week_14_meeting_last_one/""/>
+    <updated>2015-05-08T15:00:24+00:00</updated>
+    <published>2015-05-08T15:00:24+00:00</published>
+    <title>Week 14 Meeting (Last One!)</title>
+  </entry>
+  <entry>
+    <author>
+      <name>/u/ritlug</name>
+      <uri>https://old.reddit.com/user/ritlug</uri>
+    </author>
+    <category term=""RITLUG"" label=""r/RITLUG""/>
+    <content type=""html"">Imagine RIT!</content>
+    <id>t3_34mm0c</id>
+    <media:thumbnail url=""https://external-preview.redd.it/XltUh1UUqG8HkKRf4HXGFOQaOrJzsE3lY7Uyl1JlaXs.jpg?width=108&amp;crop=smart&amp;auto=webp&amp;s=b0bf86abc594a5ecdac465ac3028b58f1e454e95""/>
+    <link href=""https://old.reddit.com/r/RITLUG/comments/34mm0c/imagine_rit_today/""/>
+    <updated>2015-05-02T15:08:43+00:00</updated>
+    <published>2015-05-02T15:08:43+00:00</published>
+    <title>Imagine RIT Today!</title>
+  </entry>
+  <entry>
+    <author>
+      <name>/u/ritlug</name>
+      <uri>https://old.reddit.com/user/ritlug</uri>
+    </author>
+    <category term=""RITLUG"" label=""r/RITLUG""/>
+    <content type=""html"">Week 8</content>
+    <id>t3_2zmtur</id>
+    <media:thumbnail url=""https://external-preview.redd.it/XltUh1UUqG8HkKRf4HXGFOQaOrJzsE3lY7Uyl1JlaXs.jpg?width=108&amp;crop=smart&amp;auto=webp&amp;s=b0bf86abc594a5ecdac465ac3028b58f1e454e95""/>
+    <link href=""https://old.reddit.com/r/RITLUG/comments/2zmtur/week_8_meeting_imagine_rit/""/>
+    <updated>2015-03-19T22:06:44+00:00</updated>
+    <published>2015-03-19T22:06:44+00:00</published>
+    <title>Week 8 Meeting (Imagine RIT)</title>
+  </entry>
+</feed>
+";
+
+            const string missingPost = 
+@"<?xml version=""1.0"" encoding=""UTF-8""?>
+<feed xmlns=""http://www.w3.org/2005/Atom"" xmlns:media=""http://search.yahoo.com/mrss/"">
+  <category term=""RITLUG"" label=""r/RITLUG""/>
+  <updated>2024-12-27T02:41:43+00:00</updated>
+  <icon>https://www.redditstatic.com/icon.png/</icon>
+  <id>/r/ritlug/.rss</id>
+  <link rel=""self"" href=""https://old.reddit.com/r/ritlug/.rss"" type=""application/atom+xml""/>
+  <link rel=""alternate"" href=""https://old.reddit.com/r/ritlug/"" type=""text/html""/>
+  <subtitle>The official subreddit for the RIT Linux Users Group, RITlug! All announcements and club-related discussions take place on our various chat channels.</subtitle>
+  <title>RIT Linux Users Group</title>
+  <entry>
+    <author>
+      <name>/u/ryan77627</name>
+      <uri>https://old.reddit.com/user/ryan77627</uri>
+    </author>
+    <category term=""RITLUG"" label=""r/RITLUG""/>
+    <content type=""html"">Where to find us!</content>
+    <id>t3_10kg65u</id>
+    <link href=""https://old.reddit.com/r/RITLUG/comments/10kg65u/where_to_find_us_links/""/>
+    <updated>2023-01-24T21:02:43+00:00</updated>
+    <published>2023-01-24T21:02:43+00:00</published>
+    <title>Where to find us + Links</title>
+  </entry>
+  <entry>
+    <author>
+      <name>/u/ritlug</name>
+      <uri>https://old.reddit.com/user/ritlug</uri>
+    </author>
+    <category term=""RITLUG"" label=""r/RITLUG""/>
+    <content type=""html"">Week 14!</content>
+    <id>t3_35aov1</id>
+    <media:thumbnail url=""https://external-preview.redd.it/XltUh1UUqG8HkKRf4HXGFOQaOrJzsE3lY7Uyl1JlaXs.jpg?width=108&amp;crop=smart&amp;auto=webp&amp;s=b0bf86abc594a5ecdac465ac3028b58f1e454e95""/>
+    <link href=""https://old.reddit.com/r/RITLUG/comments/35aov1/week_14_meeting_last_one/""/>
+    <updated>2015-05-08T15:00:24+00:00</updated>
+    <published>2015-05-08T15:00:24+00:00</published>
+    <title>Week 14 Meeting (Last One!)</title>
+  </entry>
+  <entry>
+    <author>
+      <name>/u/ritlug</name>
+      <uri>https://old.reddit.com/user/ritlug</uri>
+    </author>
+    <category term=""RITLUG"" label=""r/RITLUG""/>
+    <content type=""html"">Week 8</content>
+    <id>t3_2zmtur</id>
+    <media:thumbnail url=""https://external-preview.redd.it/XltUh1UUqG8HkKRf4HXGFOQaOrJzsE3lY7Uyl1JlaXs.jpg?width=108&amp;crop=smart&amp;auto=webp&amp;s=b0bf86abc594a5ecdac465ac3028b58f1e454e95""/>
+    <link href=""https://old.reddit.com/r/RITLUG/comments/2zmtur/week_8_meeting_imagine_rit/""/>
+    <updated>2015-03-19T22:06:44+00:00</updated>
+    <published>2015-03-19T22:06:44+00:00</published>
+    <title>Week 8 Meeting (Imagine RIT)</title>
+  </entry>
+</feed>";
+        
+            string fileLocation = Path.Combine( testDir.FullName, "RitlugReddit.xml" );
+            Uri url = new Uri( SethPath.ToUri( fileLocation ) );
+
+            var rauConfig = new RauConfig( null )
+            {
+                DefaultLanguages = new List<string>() { "en-US" }
+            };
+            
+            var config = new FeedConfig(
+                url,
+                "ritlug.com",
+                "SomePassword",
+                new Uri( "https://at.shendrick.net" ),
+                "0 0 * * * ?",
+                null,
+                null,
+                ["en-US"],
+                true
+            );
+            
+            var uut = new FeedReader( Client, config );
+            
+            // Act
+            File.WriteAllText( fileLocation, initialFeed );
+            uut.Initialize();
+            
+            File.WriteAllText( fileLocation, updatedFeed );
+            List<SyndicationItem> firstPass = uut.UpdateAsync().Result;
+            List<SyndicationItem> secondPass = uut.UpdateAsync().Result;
+
+            File.WriteAllText( fileLocation, missingPost );
+            List<SyndicationItem> passWithMissingPost = uut.UpdateAsync().Result;
+            
+            // Check
+            Assert.AreEqual(
+                "RIT Linux Users Group",
+                uut.FeedTitle
+            );
+            Assert.IsNull( uut.FeedLanguage ); // No language specified.  Leave null.
+            
+            Assert.AreEqual( 1, firstPass.Count );
+            Assert.AreEqual( 0, secondPass.Count );
+            Assert.AreEqual( 0, passWithMissingPost.Count );
+
+            var expectedPost1 = new PdsPost
+            {
+                Languages = ["en-US"],
+                PostAttachmentPage = new Uri( "https://old.reddit.com/r/RITLUG/comments/34mm0c/imagine_rit_today/" ),
+                PostContents = "RIT Linux Users Group: Imagine RIT Today!"
+            };
+            PdsPost post1 = firstPass[0].GeneratePost( uut, rauConfig );
+            AssertEx.ArePdsPostsEqual( expectedPost1, post1 );
         }
     }
 }

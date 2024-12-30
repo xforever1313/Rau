@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Prometheus;
 using Quartz;
+using Rau.Logging;
 using Rau.Standard;
 using Rau.Standard.Configuration;
 using Serilog;
@@ -35,7 +36,7 @@ namespace Rau
         )
         {
             var logger = new LoggerConfiguration()
-                .WriteTo.Console( Serilog.Events.LogEventLevel.Information );
+                .WriteTo.Console( config.ConsoleLogLevel.ToSerilogLevel());
 
             bool useFileLogger = false;
             bool useTelegramLogger = false;
@@ -46,7 +47,7 @@ namespace Rau
                 useFileLogger = true;
                 logger.WriteTo.File(
                     logFile.FullName,
-                    restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information,
+                    restrictedToMinimumLevel: config.LogFileLevel.ToSerilogLevel(),
                     retainedFileCountLimit: 10,
                     fileSizeLimitBytes: 512 * 1000 * 1000, // 512 MB
                     shared: false
@@ -70,7 +71,7 @@ namespace Rau
                 );
                 logger.WriteTo.Telegram(
                     telegramOptions,
-                    restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Warning
+                    restrictedToMinimumLevel: config.TelegramLogLevel.ToSerilogLevel()
                 );
             }
 

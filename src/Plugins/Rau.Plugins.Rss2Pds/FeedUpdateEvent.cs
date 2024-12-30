@@ -52,15 +52,17 @@ namespace Rau.Plugins.Rss2Pds
 
             try
             {
-                api.Logger.Information( $"Checking feed for updates: {this.feedReader.FeedConfig.FeedUrl}" );
+                api.Logger.Debug( $"Checking feed for updates: {this.feedReader.FeedConfig.FeedUrl}" );
                 List<SyndicationItem> updatedItems = await this.feedReader.UpdateAsync();
 
                 if( updatedItems.Count == 0 )
                 {
-                    api.Logger.Information( $"No new items found in feed: {this.feedReader.FeedConfig.FeedUrl}" );
+                    api.Logger.Debug( $"No new items found in feed: {this.feedReader.FeedConfig.FeedUrl}" );
                 }
                 else
                 {
+                    api.Logger.Debug( $"{updatedItems.Count} new items found in feed: {this.feedReader.FeedConfig.FeedUrl}" );
+                    
                     var account = new PdsAccount
                     {
                         Instance = feedReader.FeedConfig.PdsInstanceUrl,

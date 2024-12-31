@@ -14,7 +14,7 @@
 // 
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-//++failedFetches;
+//
 
 using System.ServiceModel.Syndication;
 using Rau.Standard;
@@ -28,7 +28,6 @@ namespace Rau.Plugins.Rss2Pds
 
         private readonly FeedReader feedReader;
 
-        private uint failedFetches;
         private bool alerted;
 
         // ---------------- Constructor ----------------
@@ -37,12 +36,18 @@ namespace Rau.Plugins.Rss2Pds
         {
             this.feedReader = feedReder;
 
-            this.failedFetches = 0;
+            this.FailedFetches = 0;
         }
 
         // ---------------- Properties ----------------
 
         public override string CronString => this.feedReader.FeedConfig.CronString;
+
+        /// <summary>
+        /// The number of failed fetches in a row.
+        /// This is reset is a fetch is successful.
+        /// </summary>
+        public uint FailedFetches { get; private set; }
 
         // ---------------- Methods ----------------
 
@@ -62,13 +67,8 @@ namespace Rau.Plugins.Rss2Pds
                 else
                 {
                     api.Logger.Debug( $"{updatedItems.Count} new items found in feed: {this.feedReader.FeedConfig.FeedUrl}" );
-                    
-                    var account = new PdsAccount
-                    {
-                        Instance = feedReader.FeedConfig.PdsInstanceUrl,
-                        UserName = feedReader.FeedConfig.Handle,
-                        Password = feedReader.FeedConfig.Password
-                    };
+
+                    PdsAccount account = this.feedReader.FeedConfig.ToPdsAccount();
 
                     foreach( SyndicationItem item in updatedItems )
                     {
@@ -77,15 +77,15 @@ namespace Rau.Plugins.Rss2Pds
                     }
                 }
 
-                this.failedFetches = 0;
+                this.FailedFetches = 0;
                 this.alerted = false;
             }
             catch( Exception e )
             {
-                ++failedFetches;
+                ++this.FailedFetches;
                 if(
-                    ( failedFetches >= this.feedReader.FeedConfig.AlertThreshold ) &&
-                    ( alerted == false )
+                    ( this.FailedFetches > this.feedReader.FeedConfig.AlertThreshold ) &&
+                    ( this.alerted == false )
                 )
                 {
                     api.Logger.Warning(

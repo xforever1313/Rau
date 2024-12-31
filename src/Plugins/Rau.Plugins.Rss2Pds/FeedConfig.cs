@@ -16,6 +16,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
+using Rau.Standard;
+
 namespace Rau.Plugins.Rss2Pds
 {
     /// <summary>
@@ -71,4 +73,17 @@ namespace Rau.Plugins.Rss2Pds
         IEnumerable<string>? Languages = null,
         bool InitializeOnStartUp = true
     );
+
+    internal static class FeedConfigExtensions
+    {
+        public static PdsAccount ToPdsAccount( this FeedConfig FeedConfig )
+        {
+            return new PdsAccount
+            {
+                Instance = FeedConfig.PdsInstanceUrl,
+                Password = FeedConfig.Password,
+                UserName = FeedConfig.Handle
+            };
+        }
+    }
 }

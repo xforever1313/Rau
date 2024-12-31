@@ -16,12 +16,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
+using Cake.ArgumentBinder;
 using Cake.Frosting;
 using Seth.CakeLib.TestRunner;
 
 namespace DevOps.RunTests
 {
     [TaskName( "run_tests" )]
+    [TaskDescription( "Runs all the unit tests.  Pass in --code_coverage=true to run with coverage." )]
     public sealed class RunTestsTask : DevopsTask
     {
         public override void Run( BuildContext context )
@@ -32,8 +34,17 @@ namespace DevOps.RunTests
                 TestCsProject = context.TestCsProj
             };
 
+            TestArguments args = context.CreateFromArguments<TestArguments>();
+
             var runner = new BaseTestRunner( context, testConfig, "Rss2Pds.Tests" );
-            runner.RunTests();
+            if( args.RunWithCodeCoverage )
+            {
+                runner.RunCodeCoverage( TestArguments.CoverageFilter );
+            }
+            else
+            {
+                runner.RunTests();
+            }
         }
     }
 }

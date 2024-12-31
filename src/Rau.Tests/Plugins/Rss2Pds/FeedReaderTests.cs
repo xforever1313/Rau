@@ -84,7 +84,7 @@ namespace Rau.Tests.Plugins.Rss2Pds
         public void RocLongboardingTest()
         { 
             // Setup
-            const string initialRocLongboardingFeed = 
+            const string initialFeed = 
 @"<?xml version=""1.0"" encoding=""UTF-8""?>
 <rss version=""2.0"" xmlns:atom=""http://www.w3.org/2005/Atom"">
 <channel>
@@ -208,7 +208,7 @@ namespace Rau.Tests.Plugins.Rss2Pds
             var uut = new FeedReader( Client, config );
             
             // Act
-            File.WriteAllText( fileLocation, initialRocLongboardingFeed );
+            File.WriteAllText( fileLocation, initialFeed );
             uut.Initialize();
             
             File.WriteAllText( fileLocation, updatedFeed );

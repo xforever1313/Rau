@@ -94,5 +94,25 @@ namespace Rau
         {
             this.options.WriteOptionDescriptions( writer );
         }
+
+        /// <summary>
+        /// Returns the user-specified configuration path,
+        /// or null to use the default path.
+        /// </summary>
+        public FileInfo? GetConfigFilePath()
+        {
+            if( this.ConfigFilePath is not null )
+            {
+                return this.ConfigFilePath;
+            }
+
+            string? envInfo = Environment.GetEnvironmentVariable( "RAU_CONFIG_FILE" );
+            if( string.IsNullOrEmpty( envInfo ) == false )
+            {
+                return new FileInfo( envInfo );
+            }
+
+            return null;
+        }
     }
 }

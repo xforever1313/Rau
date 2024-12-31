@@ -182,6 +182,7 @@ namespace Rau.Configuration
             namespaceBuilder.AppendLine( "using System.Collections.Generic;" );
             namespaceBuilder.AppendLine( "using System.IO;" );
             namespaceBuilder.AppendLine( "using Rau;" );
+            namespaceBuilder.AppendLine( "using Rau.Configuration;" );
             namespaceBuilder.AppendLine( "using Rau.Standard;" );
             namespaceBuilder.AppendLine( "using Rau.Standard.Configuration;" );
             namespaceBuilder.AppendLine( "using Rau.Standard.EventScheduler;" );

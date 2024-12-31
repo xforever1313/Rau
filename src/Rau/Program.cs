@@ -43,7 +43,7 @@ namespace Rau
                 var options = new ArgumentParser( args );
                 if( options.ShowHelp )
                 {
-                    Console.WriteLine( nameof( Rau ) + " - Posts RSS feeds to an AT-Proto PDS" );
+                    Console.WriteLine( nameof( Rau ) + " - A bot framework to post to an AT-Proto PDS" );
                     options.PrintHelp( Console.Out );
                     return 0;
                 }
@@ -70,11 +70,36 @@ namespace Rau
 
                 PrintVersion();
 
-                FileInfo? configFile = options.ConfigFilePath;
+                FileInfo? configFile = options.GetConfigFilePath();
                 if( configFile is null )
                 {
-                    Console.WriteLine( "Config file is somehow null" );
-                    return 2;
+                    configFile = new FileInfo(
+                        Path.Combine(
+                            Environment.GetFolderPath( Environment.SpecialFolder.ApplicationData ),
+                            "Rau",
+                            "Config.cs"
+                        )
+                    );
+
+                    if( configFile.Exists == false )
+                    {
+                        DirectoryInfo? defaultDirectory = configFile.Directory;
+                        if( ( defaultDirectory is not null ) && defaultDirectory.Exists == false )
+                        {
+                            Directory.CreateDirectory( defaultDirectory.FullName );
+                        }
+                    }
+
+                    if( configFile.Exists == false )
+                    {
+                        WriteDefaultConfig( configFile );
+                        Console.WriteLine( "No configuration file has been specifed, and a default one does not exist." );
+                        Console.WriteLine( $"A default configuration file has been created at: {configFile.FullName}" );
+                        Console.WriteLine( "Please fill out the configuration file, and re-run this program." );
+                        Console.WriteLine();
+                        Console.WriteLine( "See https://github.com/xforever1313/Rau/blob/main/Sample.Config.cs for an example on how to configure this bot." );
+                        return 2;
+                    }
                 }
                 
                 Console.WriteLine( $"Using config file: {configFile.FullName}" );
@@ -241,6 +266,44 @@ namespace Rau
                 plugin.Initialize( api );
                 log.Debug( $"Loaded plugin {plugin.PluginName}, took {watch.Elapsed.TotalSeconds} Seconds." );
             }
+        }
+
+        private static void WriteDefaultConfig( FileInfo fileLocation )
+        {
+            string fileContents =
+$@"
+/// <summary>
+/// Configures the global settings for Rau.
+/// This includes settings that are required to launch the service.
+/// </summary>
+public override void {nameof( ApiBuilder.ConfigureRauSettings )}( {nameof( IRauConfigurator )} rau )
+{{
+    // 300 is Blue Sky's character limit.
+    rau.SetCharacterLimit( 300 );
+
+    // Uncomment and change the directory to enable logging to
+    // a file.
+    // rau.LogToFile( ""/home/rau/rau.log"" );
+
+    // Comment out to not expose a Prometheus port.
+    rau.UseMetricsAtPort( 9100 );
+
+    // Uncomment to override the default user agent information that is used
+    // when sending HTTP requests to a PDS.
+    // rau.OverridePdsUserAgent( ""my_bot"", new Version( 1, 2, 3 ) );
+}}
+
+/// <summary>
+/// Configures the bot itself.  This method is run
+/// after all plugins are loaded and initialized.
+/// </summary>
+public override void {nameof( ApiBuilder.ConfigureBot )}( {nameof( IRauApi )} rau )
+{{
+    throw new System.NotImplementedException( ""User must configure the bot before running it"" );
+}}
+";
+
+            File.WriteAllText( fileLocation.FullName, fileContents );
         }
     }
 }

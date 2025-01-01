@@ -1,6 +1,6 @@
 //
 // Rau - An AT-Proto Bot Framework
-// Copyright (C) 2024 Seth Hendrick
+// Copyright (C) 2024-2025 Seth Hendrick
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published

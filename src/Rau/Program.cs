@@ -19,13 +19,13 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Builder;
 using Mono.Options;
+using Rau.Configuration;
+using Rau.Logging;
 using Rau.Standard;
 using Rau.Standard.Configuration;
-using Rau.Configuration;
 using Serilog;
 using SethCS.Extensions;
 using SethCS.IO;
-using Rau.Logging;
 
 namespace Rau
 {

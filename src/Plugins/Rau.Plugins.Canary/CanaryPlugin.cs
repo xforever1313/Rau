@@ -98,7 +98,7 @@ namespace Rau.Plugins.Canary
             return new PdsPost( post );
         }
         
-        public void Initialize( IRauApi api )
+        public void Initialize( IRauApi api,IRauPluginInitializationArgs initArgs )
         {
             this.api = api;
             this.accountManager = new AccountManager( this.Api );

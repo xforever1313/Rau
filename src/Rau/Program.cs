@@ -137,7 +137,13 @@ namespace Rau
                 log = HostingExtensions.CreateLog( config, OnTelegramFailure );
                 
                 using var httpClient = new BskyHttpClientFactory( config );
-                
+
+                if( config.PersistenceLocation.Exists == false )
+                {
+                    Directory.CreateDirectory( config.PersistenceLocation.FullName );
+                }
+                log.Information( $"Using persistence located in: {config.PersistenceLocation.FullName}." );
+
                 // Plugins require an API to be created before initializing them.
                 using var api = new RauApi( config, pluginLoader.LoadedPlugins, httpClient, log );
                 InitPlugins( log, api );
@@ -261,9 +267,16 @@ namespace Rau
         {
             foreach( IRauPlugin plugin in api.Plugins.Values )
             {
+                var initArgs = new RauPluginInitializationArgs
+                {
+                    PersistenceLocation = new DirectoryInfo(
+                        Path.Combine( api.Config.PersistenceLocation.FullName, plugin.PluginName )
+                    )
+                };
+
                 log.Debug( $"Loading plugin {plugin.PluginName}..." );
                 Stopwatch watch = Stopwatch.StartNew();
-                plugin.Initialize( api );
+                plugin.Initialize( api, initArgs );
                 log.Debug( $"Loaded plugin {plugin.PluginName}, took {watch.Elapsed.TotalSeconds} Seconds." );
             }
         }

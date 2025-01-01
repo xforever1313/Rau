@@ -78,7 +78,7 @@ namespace Rau.Plugins.Rss2Pds
 
         // ---------------- Methods ----------------
 
-        public void Initialize( IRauApi api )
+        public void Initialize( IRauApi api, IRauPluginInitializationArgs initArgs )
         {
             this.api = api;
             this.feedManager = new FeedManager( this.httpClient, this.api );

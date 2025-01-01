@@ -28,6 +28,12 @@ namespace Rau.Standard.Configuration
         internal RauConfig( Version? assemblyVersion )
         {
             this.UserAgentVersion = assemblyVersion;
+            this.PersistenceLocation = new DirectoryInfo(
+                Path.Combine(
+                    Environment.GetFolderPath( Environment.SpecialFolder.ApplicationData ),
+                    "Rau"
+                )
+            );
         }
         
         // ---------------- Properties ----------------
@@ -37,6 +43,16 @@ namespace Rau.Standard.Configuration
         /// Defaulted to Blue Sky's limit.
         /// </summary>
         public uint CharacterLimit { get; init; } = 300;
+
+        /// <summary>
+        /// The location of Rau's persistence directory.
+        /// In other words, files that need to persist between Rau shutting down
+        /// and starting up again.
+        /// 
+        /// This is defaulted a folder in side of
+        /// <see cref="Environment.SpecialFolder.ApplicationData"/>.
+        /// </summary>
+        public DirectoryInfo PersistenceLocation { get; init; }
 
         /// <summary>
         /// The minimum log level that gets logged to the console.

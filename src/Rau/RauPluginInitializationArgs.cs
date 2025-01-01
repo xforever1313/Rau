@@ -16,32 +16,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-namespace Rau.Standard
+using Rau.Standard;
+
+namespace Rau
 {
-    public interface IRauPlugin : IDisposable
+    internal sealed class RauPluginInitializationArgs : IRauPluginInitializationArgs
     {
-        // ---------------- Properties ----------------
-
-        /// <summary>
-        /// The name of the plugin.
-        /// </summary>
-        string PluginName { get; }
-
-        /// <summary>
-        /// The GUID of the plugin.
-        /// </summary>
-        Guid PluginGuid { get; }
-
-        /// <summary>
-        /// The version of the plugin.
-        /// </summary>
-        Version PluginVersion { get; }
-
-        // ---------------- Methods ----------------
-
-        /// <summary>
-        /// Initializes this plugin and passes in the API.
-        /// </summary>
-        void Initialize( IRauApi api, IRauPluginInitializationArgs initArgs );
+        /// <inheritdoc/>
+        public required DirectoryInfo PersistenceLocation { get; init; }
     }
 }

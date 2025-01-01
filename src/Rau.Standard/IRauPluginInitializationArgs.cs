@@ -18,30 +18,19 @@
 
 namespace Rau.Standard
 {
-    public interface IRauPlugin : IDisposable
+    public interface IRauPluginInitializationArgs
     {
-        // ---------------- Properties ----------------
-
         /// <summary>
-        /// The name of the plugin.
+        /// The absolute path of the recommended spot to put files that
+        /// need to persist between when Rau shuts down and starts up again
+        /// for this plugin.
         /// </summary>
-        string PluginName { get; }
-
-        /// <summary>
-        /// The GUID of the plugin.
-        /// </summary>
-        Guid PluginGuid { get; }
-
-        /// <summary>
-        /// The version of the plugin.
-        /// </summary>
-        Version PluginVersion { get; }
-
-        // ---------------- Methods ----------------
-
-        /// <summary>
-        /// Initializes this plugin and passes in the API.
-        /// </summary>
-        void Initialize( IRauApi api, IRauPluginInitializationArgs initArgs );
+        /// <remarks>
+        /// The directory is not automatically created in case a plugin does not
+        /// require persistence.  If a plugin does require persistence, it should
+        /// create the directory if it doesn't exist inside of
+        /// <see cref="IRauPlugin.Initialize"/>.
+        /// </remarks>
+        DirectoryInfo PersistenceLocation { get; }
     }
 }

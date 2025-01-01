@@ -66,6 +66,11 @@ namespace Rau
                     "check_config",
                     "Checks the configuration and ensures it is valid.  Exits with 0 if valid.",
                     v => this.CheckConfigOnly = ( v is not null )
+                },
+                {
+                    "use_enter_to_exit",
+                    "Allows the user to send enter to exit instead of CTRL+C.  Should only ever be used in a testing context.",
+                    v => this.UseEnterToExit = ( v is not null )
                 }
             };
 
@@ -86,6 +91,8 @@ namespace Rau
 
         public bool CheckConfigOnly { get; private set; }
         
+        public bool UseEnterToExit { get; private set; }
+
         public FileInfo? ConfigFilePath { get; private set; }
         
         // ---------------- Methods ----------------

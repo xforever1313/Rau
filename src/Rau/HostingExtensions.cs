@@ -36,7 +36,10 @@ namespace Rau
         )
         {
             var logger = new LoggerConfiguration()
-                .WriteTo.Console( config.ConsoleLogLevel.ToSerilogLevel());
+                // Use all levels, but each sink will
+                // specify the level to use individually.
+                .MinimumLevel.Verbose()
+                .WriteTo.Console( config.ConsoleLogLevel.ToSerilogLevel() );
 
             bool useFileLogger = false;
             bool useTelegramLogger = false;

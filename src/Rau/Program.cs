@@ -18,6 +18,7 @@
 
 using System.Diagnostics;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Mono.Options;
 using Rau.Configuration;
 using Rau.Logging;
@@ -31,6 +32,8 @@ namespace Rau
 {
     internal static class Program
     {
+        internal static readonly string RunningMessage = "Press Enter to Exit...";
+
         private static Version? version = null;
 
         private static Serilog.ILogger? log = null;
@@ -165,12 +168,22 @@ namespace Rau
                 log.Information( "Application Running..." );
 
                 // These are no longer needed, set to null so they get collected.
+                bool useEnterToExit = options.UseEnterToExit;
                 configCompiler = null;
                 pluginFiles = null;
                 apiBuilder = null;
                 options = null;
                 pluginLoader = null;
-                app.Run();
+
+                if( useEnterToExit )
+                {
+                    Console.WriteLine( RunningMessage );
+                    Console.ReadLine();
+                }
+                else
+                {
+                    app.Run();
+                }
             }
             catch( OptionException e )
             {
@@ -194,6 +207,7 @@ namespace Rau
             finally
             {
                 log?.Information( "Application Exiting" );
+                Console.WriteLine( "Application Exiting" );
             }
 
             return 0;

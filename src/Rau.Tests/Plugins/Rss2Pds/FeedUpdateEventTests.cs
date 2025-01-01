@@ -16,7 +16,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-using System;
 using FakeItEasy;
 using Rau.Plugins.Rss2Pds;
 using Rau.Standard.Configuration;

@@ -18,6 +18,7 @@
 
 using Rau.Standard.Configuration;
 using Rau.Standard.EventScheduler;
+using Rau.Standard.Logging;
 
 namespace Rau.Standard
 {
@@ -45,6 +46,15 @@ namespace Rau.Standard
         /// Allows events to be scheduled.
         /// </summary>
         IScheduledEventManager EventScheduler { get; }
+
+        /// <summary>
+        /// Allows one to log messages without any context associated with them.
+        /// It is not recommended to invoke this via plugins, rather use
+        /// a plugin's <see cref="IRauPluginInitializationArgs.PluginLogger"/> instead.
+        /// This should only be used during configuration of the bot, or when logging a message
+        /// in a plugin where a plugin context doesn't make sense for some reason.
+        /// </summary>
+        IRauLogger Logger { get; }
 
         /// <summary>
         /// Allows one to post messages to a PDS.

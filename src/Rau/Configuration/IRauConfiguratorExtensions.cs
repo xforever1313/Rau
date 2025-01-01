@@ -17,11 +17,33 @@
 //
 
 using Rau.Standard.Configuration;
+using Rau.Standard.Logging;
 
 namespace Rau.Configuration
 {
     public static class IRauConfiguratorExtensions
     {
+        /// <summary>
+        /// Sets the persistence directory for Rau.
+        /// </summary>
+        public static void UsePersistenceDirectory( this IRauConfigurator rau, string newDirectory )
+        {
+            rau.UsePersistenceDirectory( new DirectoryInfo( newDirectory ) );
+        }
+
+        /// <summary>
+        /// Sets the persistence directory for Rau.
+        /// </summary>
+        public static void UsePersistenceDirectory( this IRauConfigurator rau, DirectoryInfo newDirectory )
+        {
+            RauConfig config = rau.Config with
+            {
+                PersistenceLocation = newDirectory
+            };
+
+            rau.Configure( config );
+        }
+
         /// <summary>
         /// Sets the maximum character limit for messages.
         /// This value must be greater than zero.
@@ -39,21 +61,55 @@ namespace Rau.Configuration
         /// <summary>
         /// Enables file logging if called.
         /// </summary>
-        /// <param name="filePath">The absolute file path to msLogger to.</param>
-        public static void LogToFile( this IRauConfigurator rau, string filePath )
+        /// <param name="filePath">The absolute file path to write the log file to.</param>
+        /// <param name="logLevel">
+        /// <seealso cref="RauConfig.LogFileLevel"/>.
+        /// Leave null use the default level.
+        /// </param>
+        public static void LogToFile(
+            this IRauConfigurator rau,
+            string filePath,
+            RauLogLevel? logLevel = null
+        )
         {
-            rau.LogToFile( new FileInfo( filePath ) );
+            rau.LogToFile( new FileInfo( filePath ), logLevel );
         }
 
         /// <summary>
         /// Enables file logging if called.
         /// </summary>
-        /// <param name="fileName">The file name to msLogger to.</param>
-        public static void LogToFile( this IRauConfigurator rau, FileInfo filePath )
+        /// <param name="filePath">The absolute file path to write the log file to.</param>
+        /// <param name="logLevel">
+        /// <seealso cref="RauConfig.LogFileLevel"/>.
+        /// Leave null use the default level.
+        /// </param>
+        public static void LogToFile(
+            this IRauConfigurator rau,
+            FileInfo filePath,
+            RauLogLevel? logLevel = null
+        )
         {
             RauConfig config = rau.Config with
             {
                 LogFile = filePath
+            };
+
+            if( logLevel is not null )
+            {
+                config = config with
+                {
+                    LogFileLevel = logLevel.Value
+                };
+            }
+
+            rau.Configure( config );
+        }
+
+        public static void SetConsoleLogLevel( this IRauConfigurator rau, RauLogLevel level )
+        {
+            RauConfig config = rau.Config with
+            {
+                ConsoleLogLevel = level
             };
 
             rau.Configure( config );

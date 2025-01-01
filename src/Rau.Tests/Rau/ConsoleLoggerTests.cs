@@ -16,9 +16,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-using System.Runtime.CompilerServices;
 using System.Text;
-using Rau.Standard.Configuration;
 using Rau.Standard.Logging;
 
 namespace Rau.Tests.Rau

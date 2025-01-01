@@ -23,6 +23,11 @@ namespace Rau.Tests
 {
     public class RauProcessRunner : IDisposable
     {
+        // ---------------- Events ----------------
+
+        public event Action<string> StandardOutReceived;
+        public event Action<string> StandardErrorReceived;
+
         // ---------------- Fields ----------------
 
         private static readonly TimeSpan defaultTimeout = new TimeSpan( 0, 0, 10 );
@@ -185,6 +190,7 @@ namespace Rau.Tests
             if( string.IsNullOrEmpty( e.Data ) == false )
             {
                 Console.Error.WriteLine( e.Data );
+                this.StandardErrorReceived?.Invoke( e.Data );
             }
         }
 
@@ -193,6 +199,7 @@ namespace Rau.Tests
             if( string.IsNullOrEmpty( e.Data ) == false )
             {
                 Console.WriteLine( e.Data );
+                this.StandardOutReceived?.Invoke( e.Data );
                 if( e.Data.Contains( Program.RunningMessage ) )
                 {
                     this.runningEvent.Set();

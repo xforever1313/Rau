@@ -17,6 +17,7 @@
 //
 
 using System.Runtime.CompilerServices;
+using System.Text;
 using Rau.Standard.Configuration;
 using Rau.Standard.Logging;
 
@@ -29,7 +30,7 @@ namespace Rau.Tests.Rau
     // Since we write to a file system, do not parallelize so nothing
     // weird happens.
     [DoNotParallelize]
-    public sealed class FileLoggerTests
+    public sealed class ConsoleLoggerTests
     {
         // ---------------- Fields ----------------
 
@@ -40,7 +41,7 @@ namespace Rau.Tests.Rau
         [ClassInitialize]
         public static void FixtureSetup( TestContext testContext )
         {
-            testDirectory = RauProcessRunner.GetTestDirectory( nameof( FileLoggerTests ) );
+            testDirectory = RauProcessRunner.GetTestDirectory( nameof( ConsoleLoggerTests ) );
             if( testDirectory.Exists )
             {
                 testDirectory.Delete( true );
@@ -78,29 +79,25 @@ namespace Rau.Tests.Rau
             const RauLogLevel logLevel = RauLogLevel.Verbose;
 
             var workingDirectory = new DirectoryInfo( Path.Combine( TestDirectory.FullName, $"{logLevel}Test" ) );
-            var fileLocation = new FileInfo( Path.Combine( workingDirectory.FullName, $"log.log" ) );
-            string configFileContents = GetConfigFileContents( logLevel, fileLocation );
+            string configFileContents = GetConfigFileContents( logLevel, workingDirectory );
 
             // Act
+
             using var runner = new RauProcessRunner( workingDirectory, configFileContents );
+            using var stdOut = new StdOutCapturer( runner );
             runner.Start();
             runner.StopProcess();
 
             // Check
             Assert.AreEqual( 0, runner.ExitCode );
-            Assert.IsTrue( fileLocation.Exists );
 
-            string logFileContents = File.ReadAllText( fileLocation.FullName );
+            string consoleContents = stdOut.ToString();
 
-            Console.WriteLine();
-            Console.WriteLine( "Log file contents: " );
-            Console.WriteLine( logFileContents );
-
-            Assert.IsTrue( logFileContents.Contains( GetDebugMessage( RauLogLevel.Verbose ) ) );
-            Assert.IsTrue( logFileContents.Contains( GetDebugMessage( RauLogLevel.Debug ) ) );
-            Assert.IsTrue( logFileContents.Contains( GetDebugMessage( RauLogLevel.Information ) ) );
-            Assert.IsTrue( logFileContents.Contains( GetDebugMessage( RauLogLevel.Error ) ) );
-            Assert.IsTrue( logFileContents.Contains( GetDebugMessage( RauLogLevel.Fatal ) ) );
+            Assert.IsTrue( consoleContents.Contains( GetDebugMessage( RauLogLevel.Verbose ) ) );
+            Assert.IsTrue( consoleContents.Contains( GetDebugMessage( RauLogLevel.Debug ) ) );
+            Assert.IsTrue( consoleContents.Contains( GetDebugMessage( RauLogLevel.Information ) ) );
+            Assert.IsTrue( consoleContents.Contains( GetDebugMessage( RauLogLevel.Error ) ) );
+            Assert.IsTrue( consoleContents.Contains( GetDebugMessage( RauLogLevel.Fatal ) ) );
         }
 
         [TestMethod]
@@ -110,29 +107,24 @@ namespace Rau.Tests.Rau
             const RauLogLevel logLevel = RauLogLevel.Debug;
 
             var workingDirectory = new DirectoryInfo( Path.Combine( TestDirectory.FullName, $"{logLevel}Test" ) );
-            var fileLocation = new FileInfo( Path.Combine( workingDirectory.FullName, $"log.log" ) );
-            string configFileContents = GetConfigFileContents( logLevel, fileLocation );
+            string configFileContents = GetConfigFileContents( logLevel, workingDirectory );
 
             // Act
             using var runner = new RauProcessRunner( workingDirectory, configFileContents );
+            using var stdOut = new StdOutCapturer( runner );
             runner.Start();
             runner.StopProcess();
 
             // Check
             Assert.AreEqual( 0, runner.ExitCode );
-            Assert.IsTrue( fileLocation.Exists );
 
-            string logFileContents = File.ReadAllText( fileLocation.FullName );
+            string consoleContents = stdOut.ToString();
 
-            Console.WriteLine();
-            Console.WriteLine( "Log file contents: " );
-            Console.WriteLine( logFileContents );
-
-            Assert.IsFalse( logFileContents.Contains( GetDebugMessage( RauLogLevel.Verbose ) ) );
-            Assert.IsTrue( logFileContents.Contains( GetDebugMessage( RauLogLevel.Debug ) ) );
-            Assert.IsTrue( logFileContents.Contains( GetDebugMessage( RauLogLevel.Information ) ) );
-            Assert.IsTrue( logFileContents.Contains( GetDebugMessage( RauLogLevel.Error ) ) );
-            Assert.IsTrue( logFileContents.Contains( GetDebugMessage( RauLogLevel.Fatal ) ) );
+            Assert.IsFalse( consoleContents.Contains( GetDebugMessage( RauLogLevel.Verbose ) ) );
+            Assert.IsTrue( consoleContents.Contains( GetDebugMessage( RauLogLevel.Debug ) ) );
+            Assert.IsTrue( consoleContents.Contains( GetDebugMessage( RauLogLevel.Information ) ) );
+            Assert.IsTrue( consoleContents.Contains( GetDebugMessage( RauLogLevel.Error ) ) );
+            Assert.IsTrue( consoleContents.Contains( GetDebugMessage( RauLogLevel.Fatal ) ) );
         }
 
         [TestMethod]
@@ -142,29 +134,24 @@ namespace Rau.Tests.Rau
             const RauLogLevel logLevel = RauLogLevel.Information;
 
             var workingDirectory = new DirectoryInfo( Path.Combine( TestDirectory.FullName, $"{logLevel}Test" ) );
-            var fileLocation = new FileInfo( Path.Combine( workingDirectory.FullName, $"log.log" ) );
-            string configFileContents = GetConfigFileContents( logLevel, fileLocation );
+            string configFileContents = GetConfigFileContents( logLevel, workingDirectory );
 
             // Act
             using var runner = new RauProcessRunner( workingDirectory, configFileContents );
+            using var stdOut = new StdOutCapturer( runner );
             runner.Start();
             runner.StopProcess();
 
             // Check
             Assert.AreEqual( 0, runner.ExitCode );
-            Assert.IsTrue( fileLocation.Exists );
 
-            string logFileContents = File.ReadAllText( fileLocation.FullName );
+            string consoleContents = stdOut.ToString();
 
-            Console.WriteLine();
-            Console.WriteLine( "Log file contents: " );
-            Console.WriteLine( logFileContents );
-
-            Assert.IsFalse( logFileContents.Contains( GetDebugMessage( RauLogLevel.Verbose ) ) );
-            Assert.IsFalse( logFileContents.Contains( GetDebugMessage( RauLogLevel.Debug ) ) );
-            Assert.IsTrue( logFileContents.Contains( GetDebugMessage( RauLogLevel.Information ) ) );
-            Assert.IsTrue( logFileContents.Contains( GetDebugMessage( RauLogLevel.Error ) ) );
-            Assert.IsTrue( logFileContents.Contains( GetDebugMessage( RauLogLevel.Fatal ) ) );
+            Assert.IsFalse( consoleContents.Contains( GetDebugMessage( RauLogLevel.Verbose ) ) );
+            Assert.IsFalse( consoleContents.Contains( GetDebugMessage( RauLogLevel.Debug ) ) );
+            Assert.IsTrue( consoleContents.Contains( GetDebugMessage( RauLogLevel.Information ) ) );
+            Assert.IsTrue( consoleContents.Contains( GetDebugMessage( RauLogLevel.Error ) ) );
+            Assert.IsTrue( consoleContents.Contains( GetDebugMessage( RauLogLevel.Fatal ) ) );
         }
 
         [TestMethod]
@@ -174,29 +161,24 @@ namespace Rau.Tests.Rau
             const RauLogLevel logLevel = RauLogLevel.Error;
 
             var workingDirectory = new DirectoryInfo( Path.Combine( TestDirectory.FullName, $"{logLevel}Test" ) );
-            var fileLocation = new FileInfo( Path.Combine( workingDirectory.FullName, $"log.log" ) );
-            string configFileContents = GetConfigFileContents( logLevel, fileLocation );
+            string configFileContents = GetConfigFileContents( logLevel, workingDirectory );
 
             // Act
             using var runner = new RauProcessRunner( workingDirectory, configFileContents );
+            using var stdOut = new StdOutCapturer( runner );
             runner.Start();
             runner.StopProcess();
 
             // Check
             Assert.AreEqual( 0, runner.ExitCode );
-            Assert.IsTrue( fileLocation.Exists );
 
-            string logFileContents = File.ReadAllText( fileLocation.FullName );
+            string consoleContents = stdOut.ToString();
 
-            Console.WriteLine();
-            Console.WriteLine( "Log file contents: " );
-            Console.WriteLine( logFileContents );
-
-            Assert.IsFalse( logFileContents.Contains( GetDebugMessage( RauLogLevel.Verbose ) ) );
-            Assert.IsFalse( logFileContents.Contains( GetDebugMessage( RauLogLevel.Debug ) ) );
-            Assert.IsFalse( logFileContents.Contains( GetDebugMessage( RauLogLevel.Information ) ) );
-            Assert.IsTrue( logFileContents.Contains( GetDebugMessage( RauLogLevel.Error ) ) );
-            Assert.IsTrue( logFileContents.Contains( GetDebugMessage( RauLogLevel.Fatal ) ) );
+            Assert.IsFalse( consoleContents.Contains( GetDebugMessage( RauLogLevel.Verbose ) ) );
+            Assert.IsFalse( consoleContents.Contains( GetDebugMessage( RauLogLevel.Debug ) ) );
+            Assert.IsFalse( consoleContents.Contains( GetDebugMessage( RauLogLevel.Information ) ) );
+            Assert.IsTrue( consoleContents.Contains( GetDebugMessage( RauLogLevel.Error ) ) );
+            Assert.IsTrue( consoleContents.Contains( GetDebugMessage( RauLogLevel.Fatal ) ) );
         }
 
         [TestMethod]
@@ -206,45 +188,37 @@ namespace Rau.Tests.Rau
             const RauLogLevel logLevel = RauLogLevel.Fatal;
 
             var workingDirectory = new DirectoryInfo( Path.Combine( TestDirectory.FullName, $"{logLevel}Test" ) );
-            var fileLocation = new FileInfo( Path.Combine( workingDirectory.FullName, $"log.log" ) );
-            string configFileContents = GetConfigFileContents( logLevel, fileLocation );
+            string configFileContents = GetConfigFileContents( logLevel, workingDirectory );
 
             // Act
             using var runner = new RauProcessRunner( workingDirectory, configFileContents );
+            using var stdOut = new StdOutCapturer( runner );
             runner.Start();
             runner.StopProcess();
 
             // Check
             Assert.AreEqual( 0, runner.ExitCode );
-            Assert.IsTrue( fileLocation.Exists );
 
-            string logFileContents = File.ReadAllText( fileLocation.FullName );
+            string consoleContents = stdOut.ToString();
 
-            Console.WriteLine();
-            Console.WriteLine( "Log file contents: " );
-            Console.WriteLine( logFileContents );
-
-            Assert.IsFalse( logFileContents.Contains( GetDebugMessage( RauLogLevel.Verbose ) ) );
-            Assert.IsFalse( logFileContents.Contains( GetDebugMessage( RauLogLevel.Debug ) ) );
-            Assert.IsFalse( logFileContents.Contains( GetDebugMessage( RauLogLevel.Information ) ) );
-            Assert.IsFalse( logFileContents.Contains( GetDebugMessage( RauLogLevel.Error ) ) );
-            Assert.IsTrue( logFileContents.Contains( GetDebugMessage( RauLogLevel.Fatal ) ) );
+            Assert.IsFalse( consoleContents.Contains( GetDebugMessage( RauLogLevel.Verbose ) ) );
+            Assert.IsFalse( consoleContents.Contains( GetDebugMessage( RauLogLevel.Debug ) ) );
+            Assert.IsFalse( consoleContents.Contains( GetDebugMessage( RauLogLevel.Information ) ) );
+            Assert.IsFalse( consoleContents.Contains( GetDebugMessage( RauLogLevel.Error ) ) );
+            Assert.IsTrue( consoleContents.Contains( GetDebugMessage( RauLogLevel.Fatal ) ) );
         }
 
         // ---------------- Test Helpers ----------------
 
-        private static string GetConfigFileContents( RauLogLevel logLevel, FileInfo fileLocation )
+        private static string GetConfigFileContents( RauLogLevel logLevel, DirectoryInfo testDirectory )
         {
-            DirectoryInfo? directory = fileLocation.Directory;
-            Assert.IsNotNull( directory );
             string fileContents =
 $@"
 public override void ConfigureRauSettings( IRauConfigurator configurator )
 {{
-    configurator.UsePersistenceDirectory( @""{directory.FullName}"" );
+    configurator.UsePersistenceDirectory( @""{testDirectory.FullName}"" );
 
-    configurator.SetConsoleLogLevel( {nameof( RauLogLevel )}.{RauLogLevel.Verbose} );
-    configurator.LogToFile( @""{fileLocation.FullName}"", {nameof( RauLogLevel )}.{logLevel} );
+    configurator.SetConsoleLogLevel( {nameof( RauLogLevel )}.{logLevel} );
 }}
 
 public override void ConfigureBot( IRauApi rau )
@@ -267,7 +241,43 @@ public override void ConfigureBot( IRauApi rau )
 
         private static string GetDebugMessage( RauLogLevel logLevel )
         {
-            return $"RAU FILE LOGGER TEST: {nameof( RauLogLevel )}.{logLevel}";
+            return $"RAU CONSOLE LOGGER TEST: {nameof( RauLogLevel )}.{logLevel}";
+        }
+
+        private class StdOutCapturer : IDisposable
+        {
+            // ---------------- Fields ----------------
+
+            private readonly RauProcessRunner runner;
+
+            private readonly StringBuilder stdOut;
+
+            // ---------------- Constructor ----------------
+
+            public StdOutCapturer( RauProcessRunner runner )
+            {
+                this.runner = runner;
+                this.stdOut = new StringBuilder();
+
+                this.runner.StandardOutReceived += Runner_StandardOutReceived;
+            }
+
+            // ---------------- Methods ----------------
+
+            public override string ToString()
+            {
+                return this.stdOut.ToString();
+            }
+
+            public void Dispose()
+            {
+                this.runner.StandardOutReceived -= Runner_StandardOutReceived;
+            }
+
+            private void Runner_StandardOutReceived( string obj )
+            {
+                this.stdOut.AppendLine( obj );
+            }
         }
     }
 }

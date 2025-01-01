@@ -25,6 +25,7 @@ using Rau.Configuration;
 using Serilog;
 using SethCS.Extensions;
 using SethCS.IO;
+using Rau.Logging;
 
 namespace Rau
 {
@@ -271,7 +272,8 @@ namespace Rau
                 {
                     PersistenceLocation = new DirectoryInfo(
                         Path.Combine( api.Config.PersistenceLocation.FullName, plugin.PluginName )
-                    )
+                    ),
+                    PluginLogger = new RauLogger( log.ForContext( plugin.GetType() ) )
                 };
 
                 log.Debug( $"Loading plugin {plugin.PluginName}..." );

@@ -19,6 +19,7 @@
 using System.ServiceModel.Syndication;
 using Rau.Standard;
 using Rau.Standard.EventScheduler;
+using Rau.Standard.Logging;
 
 namespace Rau.Plugins.Rss2Pds
 {
@@ -28,13 +29,16 @@ namespace Rau.Plugins.Rss2Pds
 
         private readonly FeedReader feedReader;
 
+        private readonly IRauLogger pluginLogger;
+
         private bool alerted;
 
         // ---------------- Constructor ----------------
 
-        public FeedUpdateEvent( FeedReader feedReder )
+        public FeedUpdateEvent( FeedReader feedReder, IRauLogger pluginLogger )
         {
             this.feedReader = feedReder;
+            this.pluginLogger = pluginLogger;
 
             this.FailedFetches = 0;
         }
@@ -57,23 +61,23 @@ namespace Rau.Plugins.Rss2Pds
 
             try
             {
-                api.Logger.Debug( $"Checking feed for updates: {this.feedReader.FeedConfig.FeedUrl}" );
+                this.pluginLogger.Debug( $"Checking feed for updates: {this.feedReader.FeedConfig.FeedUrl}" );
                 List<SyndicationItem> updatedItems = await this.feedReader.UpdateAsync();
 
                 if( updatedItems.Count == 0 )
                 {
-                    api.Logger.Debug( $"No new items found in feed: {this.feedReader.FeedConfig.FeedUrl}" );
+                    this.pluginLogger.Debug( $"No new items found in feed: {this.feedReader.FeedConfig.FeedUrl}" );
                 }
                 else
                 {
-                    api.Logger.Debug( $"{updatedItems.Count} new items found in feed: {this.feedReader.FeedConfig.FeedUrl}" );
+                    this.pluginLogger.Debug( $"{updatedItems.Count} new items found in feed: {this.feedReader.FeedConfig.FeedUrl}" );
 
                     PdsAccount account = this.feedReader.FeedConfig.ToPdsAccount();
 
                     foreach( SyndicationItem item in updatedItems )
                     {
                         PdsPost post = item.GeneratePost( this.feedReader, eventParams.Api.Config );
-                        await eventParams.Api.PdsPoster.Post( account, post );
+                        await api.PdsPoster.Post( account, post );
                     }
                 }
 
@@ -88,14 +92,14 @@ namespace Rau.Plugins.Rss2Pds
                     ( this.alerted == false )
                 )
                 {
-                    api.Logger.Warning(
+                    this.pluginLogger.Warning(
                         $"Unable to fetch feed '{this.feedReader.FeedConfig.FeedUrl}' after {this.feedReader.FeedConfig.AlertThreshold} attempts.  Most recent exception: {Environment.NewLine}{e}"
                     );
                     this.alerted = true;
                 }
                 else
                 {
-                    api.Logger.Debug(
+                    this.pluginLogger.Debug(
                         $"Error when fetching feed: {this.feedReader.FeedConfig.FeedUrl}{Environment.NewLine}{e}"
                     );
                 }

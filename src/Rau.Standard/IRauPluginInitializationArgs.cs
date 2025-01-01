@@ -16,6 +16,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
+using Rau.Standard.Logging;
+
 namespace Rau.Standard
 {
     public interface IRauPluginInitializationArgs
@@ -32,5 +34,11 @@ namespace Rau.Standard
         /// <see cref="IRauPlugin.Initialize"/>.
         /// </remarks>
         DirectoryInfo PersistenceLocation { get; }
+
+        /// <summary>
+        /// The log that is bound to this plugin.  Writing to this
+        /// will prefix the log with this plugin's name.
+        /// </summary>
+        IRauLogger PluginLogger { get; }
     }
 }

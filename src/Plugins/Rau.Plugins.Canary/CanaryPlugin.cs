@@ -18,6 +18,7 @@
 
 using Rau.Standard;
 using Rau.Standard.Configuration;
+using Rau.Standard.Logging;
 
 [assembly:RauConfigurationNamespace( $"Rau.Plugins.Canary" )]
 
@@ -33,6 +34,8 @@ namespace Rau.Plugins.Canary
         public static readonly Guid PluginGuid = Guid.Parse( PluginId );
 
         private IRauApi? api;
+
+        private IRauLogger? pluginLogger;
 
         private AccountManager? accountManager;
 
@@ -77,6 +80,19 @@ namespace Rau.Plugins.Canary
             }
         }
 
+        internal IRauLogger PluginLogger
+        {
+            get
+            {
+                if( this.pluginLogger is null )
+                {
+                    throw new InvalidOperationException( $"Tried to grab the plugin logger before {nameof( Initialize )} was called." );
+                }
+
+                return this.pluginLogger;
+            }
+        }
+
         // ---------------- Methods ----------------
 
         /// <summary>
@@ -98,9 +114,11 @@ namespace Rau.Plugins.Canary
             return new PdsPost( post );
         }
         
-        public void Initialize( IRauApi api,IRauPluginInitializationArgs initArgs )
+        public void Initialize( IRauApi api, IRauPluginInitializationArgs initArgs )
         {
             this.api = api;
+            this.pluginLogger = initArgs.PluginLogger;
+
             this.accountManager = new AccountManager( this.Api );
         }
 

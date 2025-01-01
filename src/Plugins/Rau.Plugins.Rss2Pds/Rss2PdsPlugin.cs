@@ -19,6 +19,7 @@
 using System.Net.Http.Headers;
 using Rau.Standard;
 using Rau.Standard.Configuration;
+using Rau.Standard.Logging;
 
 [assembly: RauConfigurationNamespace( $"Rau.Plugins.Rss2Pds" )]
 
@@ -36,6 +37,8 @@ namespace Rau.Plugins.Rss2Pds
         private readonly HttpClient httpClient;
 
         private IRauApi? api;
+
+        private IRauLogger? pluginLogger;
 
         private FeedManager? feedManager;
 
@@ -73,6 +76,19 @@ namespace Rau.Plugins.Rss2Pds
             }
         }
 
+        internal IRauLogger PluginLogger
+        {
+            get
+            {
+                if( this.pluginLogger is null )
+                {
+                    throw new InvalidOperationException( $"Tried to grab the plugin logger before {nameof( Initialize )} was called." );
+                }
+
+                return this.pluginLogger;
+            }
+        }
+
         public FeedManager FeedManager =>
             this.feedManager ?? throw new InvalidOperationException( $"Tried to access feed manager before {nameof( Initialize )} was called." );
 
@@ -81,7 +97,9 @@ namespace Rau.Plugins.Rss2Pds
         public void Initialize( IRauApi api, IRauPluginInitializationArgs initArgs )
         {
             this.api = api;
-            this.feedManager = new FeedManager( this.httpClient, this.api );
+            this.pluginLogger = initArgs.PluginLogger;
+
+            this.feedManager = new FeedManager( this.httpClient, this.Api, this.PluginLogger );
         }
 
         public void Dispose()

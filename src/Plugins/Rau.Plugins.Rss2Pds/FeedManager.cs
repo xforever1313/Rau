@@ -18,6 +18,7 @@
 
 using Rau.Standard;
 using Rau.Standard.EventScheduler;
+using Rau.Standard.Logging;
 
 namespace Rau.Plugins.Rss2Pds
 {
@@ -31,14 +32,17 @@ namespace Rau.Plugins.Rss2Pds
 
         private readonly IRauApi api;
 
+        private readonly IRauLogger pluginLogger;
+
         // ---------------- Constructor ----------------
 
-        public FeedManager( HttpClient client, IRauApi api )
+        public FeedManager( HttpClient client, IRauApi api, IRauLogger pluginLogger )
         {
             this.feeds = new Dictionary<int, FeedReader>();
 
             this.httpClient = client;
             this.api = api;
+            this.pluginLogger = pluginLogger;
         }
 
         // ---------------- Methods ----------------
@@ -50,7 +54,7 @@ namespace Rau.Plugins.Rss2Pds
                 feed
             );
 
-            var e = new FeedUpdateEvent( feedReader );
+            var e = new FeedUpdateEvent( feedReader, this.pluginLogger );
             if( feed.InitializeOnStartUp )
             {
                 var args = new ScheduledEventArgs

@@ -18,7 +18,6 @@
 
 using Rau.Standard.Configuration;
 using Rau.Standard.EventScheduler;
-using Rau.Standard.Logging;
 
 namespace Rau.Standard
 {
@@ -46,11 +45,6 @@ namespace Rau.Standard
         /// Allows events to be scheduled.
         /// </summary>
         IScheduledEventManager EventScheduler { get; }
-
-        /// <summary>
-        /// Provides the ability to log.
-        /// </summary>
-        IRauLogger Logger { get; }
 
         /// <summary>
         /// Allows one to post messages to a PDS.

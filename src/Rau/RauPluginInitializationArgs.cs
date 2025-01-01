@@ -17,6 +17,7 @@
 //
 
 using Rau.Standard;
+using Rau.Standard.Logging;
 
 namespace Rau
 {
@@ -24,5 +25,8 @@ namespace Rau
     {
         /// <inheritdoc/>
         public required DirectoryInfo PersistenceLocation { get; init; }
+
+        /// <inheritdoc/>
+        public IRauLogger PluginLogger { get; init; }
     }
 }

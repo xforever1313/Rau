@@ -88,7 +88,6 @@ namespace Rau.Tests.Plugins.Rss2Pds
             this.mockApi = A.Fake<IRauApi>( x => x.Strict() );
 
             A.CallTo( () => this.mockApi.Config ).Returns( this.RauConfig );
-            A.CallTo( () => this.mockApi.Logger ).Returns( this.MockLogger );
             A.CallTo( () => this.mockApi.PdsPoster ).Returns( this.MockPoster );
         }
 
@@ -168,7 +167,7 @@ namespace Rau.Tests.Plugins.Rss2Pds
             );
 
             var feedReader = new FeedReader( Client, config );
-            var uut = new FeedUpdateEvent( feedReader );
+            var uut = new FeedUpdateEvent( feedReader, this.MockLogger );
 
             // Act
             string actualCrontString = uut.CronString;
@@ -305,7 +304,7 @@ namespace Rau.Tests.Plugins.Rss2Pds
             var scheduledParams = new StubScheduledEventParameters( this.MockApi );
 
             var feedReader = new FeedReader( Client, config );
-            var uut = new FeedUpdateEvent( feedReader );
+            var uut = new FeedUpdateEvent( feedReader, this.MockLogger );
 
             // Initial read, should not produce any posts or warnings.
             {
@@ -541,7 +540,7 @@ namespace Rau.Tests.Plugins.Rss2Pds
             var scheduledParams = new StubScheduledEventParameters( this.MockApi );
 
             var feedReader = new FeedReader( Client, config );
-            var uut = new FeedUpdateEvent( feedReader );
+            var uut = new FeedUpdateEvent( feedReader, this.MockLogger );
 
             // Initial read, should not produce any posts or warnings.
             {
@@ -711,7 +710,7 @@ namespace Rau.Tests.Plugins.Rss2Pds
             var scheduledParams = new StubScheduledEventParameters( this.MockApi );
 
             var feedReader = new FeedReader( Client, config );
-            var uut = new FeedUpdateEvent( feedReader );
+            var uut = new FeedUpdateEvent( feedReader, this.MockLogger );
 
             // Initial read, should not produce any posts or warnings.
             {
@@ -861,7 +860,7 @@ namespace Rau.Tests.Plugins.Rss2Pds
             var scheduledParams = new StubScheduledEventParameters( this.MockApi );
 
             var feedReader = new FeedReader( Client, config );
-            var uut = new FeedUpdateEvent( feedReader );
+            var uut = new FeedUpdateEvent( feedReader, this.MockLogger );
 
             // Initial read, should not produce any posts or warnings.
             {

@@ -153,18 +153,15 @@ namespace Rau.Tests.Plugins.Rss2Pds
             // Setup
             const string cronString = "0 0 * * * ?";
 
-            var config = new FeedConfig(
-                new Uri( "https://roclongboarding.info/rss.xml" ),
-                "roclongboarding.info",
-                "SomePassword",
-                new Uri( "https://at.shendrick.net" ),
-                cronString,
-                null,
-                null,
-                true,
-                null,
-                true
-            );
+            var config = new FeedConfig
+            {
+                FeedUrl = new Uri( "https://roclongboarding.info/rss.xml" ),
+                UserName = "roclongboarding.info",
+                Password = "SomePassword",
+                PdsInstanceUrl = new Uri( "https://at.shendrick.net" ),
+                CronString = cronString,
+                IncludeFeedTitleInPost = true
+            };
 
             var feedReader = new FeedReader( Client, config );
             var uut = new FeedUpdateEvent( feedReader, this.MockLogger );
@@ -287,18 +284,15 @@ namespace Rau.Tests.Plugins.Rss2Pds
             string fileLocation = Path.Combine( testDir.FullName, "RocLongboardingTest.xml" );
             Uri url = new Uri( SethPath.ToUri( fileLocation ) );
 
-            var config = new FeedConfig(
-                url,
-                "roclongboarding.info",
-                "SomePassword",
-                new Uri( "https://at.shendrick.net" ),
-                "0 0 * * * ?",
-                null,
-                null,
-                true,
-                null,
-                true
-            );
+            var config = new FeedConfig
+            {
+                FeedUrl = url,
+                UserName = "roclongboarding.info",
+                Password = "SomePassword",
+                PdsInstanceUrl = new Uri( "https://at.shendrick.net" ),
+                CronString = "0 0 * * * ?",
+                IncludeFeedTitleInPost = true,
+            };
 
             PdsAccount expectedAccount = config.ToPdsAccount();
 
@@ -524,18 +518,16 @@ namespace Rau.Tests.Plugins.Rss2Pds
             string fileLocation = Path.Combine( testDir.FullName, "RitLugLatest.xml" );
             Uri url = new Uri( SethPath.ToUri( fileLocation ) );
 
-            var config = new FeedConfig(
-                url,
-                "ritlug.com",
-                "SomePassword",
-                new Uri( "https://at.shendrick.net" ),
-                "0 0 * * * ?",
-                null,
-                null,
-                true,
-                ["en-GB"],
-                true
-            );
+            var config = new FeedConfig
+            {
+                FeedUrl = url,
+                UserName = "ritlug.com",
+                Password = "SomePassword",
+                PdsInstanceUrl = new Uri( "https://at.shendrick.net" ),
+                CronString = "0 0 * * * ?",
+                IncludeFeedTitleInPost = true,
+                Languages = ["en-GB"]
+            };
 
             PdsAccount expectedAccount = config.ToPdsAccount();
 
@@ -695,18 +687,16 @@ namespace Rau.Tests.Plugins.Rss2Pds
             string fileLocation = Path.Combine( testDir.FullName, "ZeroAttemptsTest.xml" );
             Uri url = new Uri( SethPath.ToUri( fileLocation ) );
 
-            var config = new FeedConfig(
-                url,
-                "roclongboarding.info",
-                "SomePassword",
-                new Uri( "https://at.shendrick.net" ),
-                "0 0 * * * ?",
-                null,
-                0, // <- No alerts, expect all failures to produce an error message.
-                true,
-                null,
-                true
-            );
+            var config = new FeedConfig
+            {
+                FeedUrl = url,
+                UserName = "roclongboarding.info",
+                Password = "SomePassword",
+                PdsInstanceUrl = new Uri( "https://at.shendrick.net" ),
+                CronString = "0 0 * * * ?",
+                IncludeFeedTitleInPost = true,
+                AlertThreshold = 0 // <- No alerts, expect all failures to produce an error message.
+            };
 
             PdsAccount expectedAccount = config.ToPdsAccount();
 
@@ -846,18 +836,16 @@ namespace Rau.Tests.Plugins.Rss2Pds
             string fileLocation = Path.Combine( testDir.FullName, "OneAttemptsTest.xml" );
             Uri url = new Uri( SethPath.ToUri( fileLocation ) );
 
-            var config = new FeedConfig(
-                url,
-                "roclongboarding.info",
-                "SomePassword",
-                new Uri( "https://at.shendrick.net" ),
-                "0 0 * * * ?",
-                null,
-                1, // <- Allow 1 failure before notifying people.
-                true,
-                null,
-                true
-            );
+            var config = new FeedConfig
+            {
+                FeedUrl = url,
+                UserName = "roclongboarding.info",
+                Password = "SomePassword",
+                PdsInstanceUrl = new Uri( "https://at.shendrick.net" ),
+                CronString = "0 0 * * * ?",
+                IncludeFeedTitleInPost = true,
+                AlertThreshold = 1 // <- Allow 1 failure before notifying people.
+            };
 
             PdsAccount expectedAccount = config.ToPdsAccount();
 

@@ -33,11 +33,11 @@ namespace Rau.Plugins.Rss2Pds
         /// <param name="feedUrl">
         /// The RSS feed to scrape.
         /// </param>
-        /// <param name="handle">
-        /// The AT-proto handle to post the RSS feeds to.
+        /// <param name="userName">
+        /// The AT-proto userName to post the RSS feeds to.
         /// </param>
         /// <param name="password">
-        /// The password to the handle to login.
+        /// The password to the userName to login.
         /// App passwords are the recommended approach instead of
         /// using the main account password.
         /// </param>
@@ -96,7 +96,7 @@ namespace Rau.Plugins.Rss2Pds
         public static int MirrorRssFeed(
             this IRauApi api,
             string feedUrl,
-            string handle,
+            string userName,
             string password,
             string pdsUrl,
             string cronString,
@@ -109,7 +109,7 @@ namespace Rau.Plugins.Rss2Pds
         {
             return api.MirrorRssFeed(
                 new Uri( feedUrl ),
-                handle,
+                userName,
                 password,
                 new Uri( pdsUrl ),
                 cronString,
@@ -127,11 +127,11 @@ namespace Rau.Plugins.Rss2Pds
         /// <param name="feedUrl">
         /// The RSS feed to scrape.
         /// </param>
-        /// <param name="handle">
-        /// The AT-proto handle to post the RSS feeds to.
+        /// <param name="userName">
+        /// The AT-proto userName to post the RSS feeds to.
         /// </param>
         /// <param name="password">
-        /// The password to the handle to login.
+        /// The password to the userName to login.
         /// App passwords are the recommended approach instead of
         /// using the main account password.
         /// </param>
@@ -190,7 +190,7 @@ namespace Rau.Plugins.Rss2Pds
         public static int MirrorRssFeed(
             this IRauApi api,
             Uri feedUrl,
-            string handle,
+            string userName,
             string password,
             Uri pdsUrl,
             string cronString,
@@ -202,18 +202,19 @@ namespace Rau.Plugins.Rss2Pds
         )
         {
             return api.MirrorRssFeed(
-                new FeedConfig(
-                    feedUrl,
-                    handle,
-                    password,
-                    pdsUrl,
-                    cronString,
-                    hashTags,
-                    alertThreshold,
-                    includeFeedTitleInPost,
-                    languages,
-                    initializeOnStartUp
-                )
+                new FeedConfig
+                {
+                    AlertThreshold = alertThreshold,
+                    CronString = cronString,
+                    FeedUrl = feedUrl,
+                    HashTags = hashTags,
+                    IncludeFeedTitleInPost = includeFeedTitleInPost,
+                    InitializeOnStartUp = initializeOnStartUp,
+                    Languages = languages,
+                    Password = password,
+                    PdsInstanceUrl = pdsUrl,
+                    UserName = userName
+                }
             );
         }
 

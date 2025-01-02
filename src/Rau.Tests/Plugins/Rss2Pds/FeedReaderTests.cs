@@ -192,19 +192,16 @@ namespace Rau.Tests.Plugins.Rss2Pds
             {
                 DefaultLanguages = new List<string>() { "en-US" }
             };
-            
-            var config = new FeedConfig(
-                url,
-                "roclongboarding.info",
-                "SomePassword",
-                new Uri( "https://at.shendrick.net" ),
-                "0 0 * * * ?",
-                null,
-                null,
-                true,
-                null,
-                true
-            );
+
+            var config = new FeedConfig
+            {
+                FeedUrl = url,
+                UserName = "roclongboarding.info",
+                Password = "SomePassword",
+                PdsInstanceUrl = new Uri( "https://at.shendrick.net" ),
+                CronString = "0 0 * * * ?",
+                IncludeFeedTitleInPost = true
+            };
             
             var uut = new FeedReader( Client, config );
             
@@ -353,18 +350,15 @@ namespace Rau.Tests.Plugins.Rss2Pds
                 DefaultLanguages = new List<string>() { "en-US" }
             };
 
-            var config = new FeedConfig(
-                url,
-                "roclongboarding.info",
-                "SomePassword",
-                new Uri( "https://at.shendrick.net" ),
-                "0 0 * * * ?",
-                null,
-                null,
-                false,
-                null,
-                true
-            );
+            var config = new FeedConfig
+            {
+                FeedUrl = url,
+                UserName = "roclongboarding.info",
+                Password = "SomePassword",
+                PdsInstanceUrl = new Uri( "https://at.shendrick.net" ),
+                CronString = "0 0 * * * ?",
+                IncludeFeedTitleInPost = false
+            };
 
             var uut = new FeedReader( Client, config );
 
@@ -562,18 +556,16 @@ namespace Rau.Tests.Plugins.Rss2Pds
                 DefaultLanguages = new List<string>() { "en-US" }
             };
             
-            var config = new FeedConfig(
-                url,
-                "ritlug.com",
-                "SomePassword",
-                new Uri( "https://at.shendrick.net" ),
-                "0 0 * * * ?",
-                null,
-                null,
-                true,
-                ["en-GB"],
-                true
-            );
+            var config = new FeedConfig
+            {
+                FeedUrl = url,
+                UserName = "ritlug.com",
+                Password = "SomePassword",
+                PdsInstanceUrl = new Uri( "https://at.shendrick.net" ),
+                CronString = "0 0 * * * ?",
+                IncludeFeedTitleInPost = true,
+                Languages = ["en-GB"]
+            };
             
             var uut = new FeedReader( Client, config );
             
@@ -812,18 +804,16 @@ namespace Rau.Tests.Plugins.Rss2Pds
                 DefaultLanguages = new List<string>() { "en-US" }
             };
             
-            var config = new FeedConfig(
-                url,
-                "ritlug.com",
-                "SomePassword",
-                new Uri( "https://at.shendrick.net" ),
-                "0 0 * * * ?",
-                null,
-                null,
-                true,
-                ["en-US"],
-                true
-            );
+            var config = new FeedConfig
+            {
+                FeedUrl = url,
+                UserName = "ritlug.com",
+                Password = "SomePassword",
+                PdsInstanceUrl = new Uri( "https://at.shendrick.net" ),
+                CronString = "0 0 * * * ?",
+                IncludeFeedTitleInPost = true,
+                Languages = ["en-US"]
+            };
             
             var uut = new FeedReader( Client, config );
             

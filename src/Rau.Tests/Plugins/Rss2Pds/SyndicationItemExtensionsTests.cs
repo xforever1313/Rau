@@ -49,18 +49,19 @@ namespace Rau.Tests.Plugins.Rss2Pds
                 DefaultLanguages = ["en-ZW"]
             };
 
-            var feedConfig = new FeedConfig(
-                new Uri( "https://shendrick.net/rss.xml" ),
-                "rssbot",
-                "some password",
-                new Uri( "https://at.shendrick.net" ),
-                "0 0 * * * ?",
-                [],
-                5,
-                true,
-                null,
-                false
-            );
+            var feedConfig = new FeedConfig
+            {
+                FeedUrl = new Uri( "https://shendrick.net/rss.xml" ),
+                UserName = "rssbot",
+                Password = "some password",
+                PdsInstanceUrl = new Uri( "https://at.shendrick.net" ),
+                CronString = "0 0 * * * ?",
+                HashTags = [],
+                AlertThreshold = 5,
+                IncludeFeedTitleInPost = true,
+                Languages = null,
+                InitializeOnStartUp = false
+            };
 
             IFeedReader feedReader = A.Fake<IFeedReader>();
             A.CallTo( () => feedReader.FeedTitle ).Returns( "Feed Title" );
@@ -70,6 +71,54 @@ namespace Rau.Tests.Plugins.Rss2Pds
             var expectedPost = new PdsPost
             {
                 PostContents = $"Feed Title: Some Title",
+                Languages = ["en-US"]
+            };
+
+            // Act
+            PdsPost actualPost = item.GeneratePost( feedReader, rauConfig );
+
+            // Check
+            AssertEx.ArePdsPostsEqual( expectedPost, actualPost );
+        }
+
+        [TestMethod]
+        public void ItemWithNoLinkNoHashTagsWithLanguageIgnoreTitleTest()
+        {
+            // Setup
+            var item = new SyndicationItem
+            {
+                Title = new TextSyndicationContent( "Some Title" )
+            };
+
+            var rauConfig = new RauConfig( assemblyVersion )
+            {
+                CharacterLimit = 300,
+                // Feed uses en-US, so it should default to that.
+                DefaultLanguages = ["en-ZW"]
+            };
+
+            var feedConfig = new FeedConfig
+            {
+                FeedUrl = new Uri( "https://shendrick.net/rss.xml" ),
+                UserName = "rssbot",
+                Password = "some password",
+                PdsInstanceUrl = new Uri( "https://at.shendrick.net" ),
+                CronString = "0 0 * * * ?",
+                HashTags = [],
+                AlertThreshold = 5,
+                IncludeFeedTitleInPost = false,
+                Languages = null,
+                InitializeOnStartUp = false
+            };
+
+            IFeedReader feedReader = A.Fake<IFeedReader>();
+            A.CallTo( () => feedReader.FeedTitle ).Returns( "Feed Title" );
+            A.CallTo( () => feedReader.FeedConfig ).Returns( feedConfig );
+            A.CallTo( () => feedReader.FeedLanguage ).Returns( "en-US" );
+
+            var expectedPost = new PdsPost
+            {
+                PostContents = $"Some Title",
                 Languages = ["en-US"]
             };
 
@@ -99,18 +148,19 @@ namespace Rau.Tests.Plugins.Rss2Pds
                 DefaultLanguages = ["en-ZW"]
             };
 
-            var feedConfig = new FeedConfig(
-                new Uri( "https://shendrick.net/rss.xml" ),
-                "rssbot",
-                "some password",
-                new Uri( "https://at.shendrick.net" ),
-                "0 0 * * * ?",
-                [],
-                5,
-                true,
-                null,
-                false
-            );
+            var feedConfig = new FeedConfig
+            {
+                FeedUrl = new Uri( "https://shendrick.net/rss.xml" ),
+                UserName = "rssbot",
+                Password = "some password",
+                PdsInstanceUrl = new Uri( "https://at.shendrick.net" ),
+                CronString = "0 0 * * * ?",
+                HashTags = [],
+                AlertThreshold = 5,
+                IncludeFeedTitleInPost = true,
+                Languages = null,
+                InitializeOnStartUp = false
+            };
 
             IFeedReader feedReader = A.Fake<IFeedReader>();
             A.CallTo( () => feedReader.FeedTitle ).Returns( "Feed Title" );
@@ -150,18 +200,19 @@ namespace Rau.Tests.Plugins.Rss2Pds
                 DefaultLanguages = ["en-ZW"]
             };
 
-            var feedConfig = new FeedConfig(
-                new Uri( "https://shendrick.net/rss.xml" ),
-                "rssbot",
-                "some password",
-                new Uri( "https://at.shendrick.net" ),
-                "0 0 * * * ?",
-                [],
-                5,
-                true,
-                null,
-                false
-            );
+            var feedConfig = new FeedConfig
+            {
+                FeedUrl = new Uri( "https://shendrick.net/rss.xml" ),
+                UserName = "rssbot",
+                Password = "some password",
+                PdsInstanceUrl = new Uri( "https://at.shendrick.net" ),
+                CronString = "0 0 * * * ?",
+                HashTags = [],
+                AlertThreshold = 5,
+                IncludeFeedTitleInPost = true,
+                Languages = null,
+                InitializeOnStartUp = false
+            };
 
             IFeedReader feedReader = A.Fake<IFeedReader>();
             A.CallTo( () => feedReader.FeedTitle ).Returns( "Feed Title" );
@@ -204,18 +255,19 @@ namespace Rau.Tests.Plugins.Rss2Pds
                 DefaultLanguages = ["en-ZW"]
             };
 
-            var feedConfig = new FeedConfig(
-                new Uri( "https://shendrick.net/rss.xml" ),
-                "rssbot",
-                "some password",
-                new Uri( "https://at.shendrick.net" ),
-                "0 0 * * * ?",
-                ["seth", "xforever1313"],
-                5,
-                true,
-                null,
-                false
-            );
+            var feedConfig = new FeedConfig
+            {
+                FeedUrl = new Uri( "https://shendrick.net/rss.xml" ),
+                UserName = "rssbot",
+                Password = "some password",
+                PdsInstanceUrl = new Uri( "https://at.shendrick.net" ),
+                CronString = "0 0 * * * ?",
+                HashTags = ["seth", "xforever1313"],
+                AlertThreshold = 5,
+                IncludeFeedTitleInPost = true,
+                Languages = null,
+                InitializeOnStartUp = false
+            };
 
             IFeedReader feedReader = A.Fake<IFeedReader>();
             A.CallTo( () => feedReader.FeedTitle ).Returns( "Feed Title" );
@@ -259,18 +311,19 @@ $@"Feed Title: Some Title
                 DefaultLanguages = ["en-ZW"]
             };
 
-            var feedConfig = new FeedConfig(
-                new Uri( "https://shendrick.net/rss.xml" ),
-                "rssbot",
-                "some password",
-                new Uri( "https://at.shendrick.net" ),
-                "0 0 * * * ?",
-                ["1", "2"],
-                5,
-                true,
-                null,
-                false
-            );
+            var feedConfig = new FeedConfig
+            {
+                FeedUrl = new Uri( "https://shendrick.net/rss.xml" ),
+                UserName = "rssbot",
+                Password = "some password",
+                PdsInstanceUrl = new Uri( "https://at.shendrick.net" ),
+                CronString = "0 0 * * * ?",
+                HashTags = ["1", "2"],
+                AlertThreshold = 5,
+                IncludeFeedTitleInPost = true,
+                Languages = null,
+                InitializeOnStartUp = false
+            };
 
             IFeedReader feedReader = A.Fake<IFeedReader>();
             A.CallTo( () => feedReader.FeedTitle ).Returns( "1" );
@@ -312,18 +365,19 @@ $@"1: 1234567890
                 DefaultLanguages = ["en-ZW"]
             };
 
-            var feedConfig = new FeedConfig(
-                new Uri( "https://shendrick.net/rss.xml" ),
-                "rssbot",
-                "some password",
-                new Uri( "https://at.shendrick.net" ),
-                "0 0 * * * ?",
-                ["1", "2"],
-                5,
-                true,
-                null,
-                false
-            );
+            var feedConfig = new FeedConfig
+            {
+                FeedUrl = new Uri( "https://shendrick.net/rss.xml" ),
+                UserName = "rssbot",
+                Password = "some password",
+                PdsInstanceUrl = new Uri( "https://at.shendrick.net" ),
+                CronString = "0 0 * * * ?",
+                HashTags = ["1", "2"],
+                AlertThreshold = 5,
+                IncludeFeedTitleInPost = true,
+                Languages = null,
+                InitializeOnStartUp = false
+            };
 
             IFeedReader feedReader = A.Fake<IFeedReader>();
             A.CallTo( () => feedReader.FeedTitle ).Returns( "1" );
@@ -367,18 +421,19 @@ $@"1234567890
                 DefaultLanguages = ["en-ZW"]
             };
 
-            var feedConfig = new FeedConfig(
-                new Uri( "https://shendrick.net/rss.xml" ),
-                "rssbot",
-                "some password",
-                new Uri( "https://at.shendrick.net" ),
-                "0 0 * * * ?",
-                ["1", "2"],
-                5,
-                true,
-                null,
-                false
-            );
+            var feedConfig = new FeedConfig
+            {
+                FeedUrl = new Uri( "https://shendrick.net/rss.xml" ),
+                UserName = "rssbot",
+                Password = "some password",
+                PdsInstanceUrl = new Uri( "https://at.shendrick.net" ),
+                CronString = "0 0 * * * ?",
+                HashTags = ["1", "2"],
+                AlertThreshold = 5,
+                IncludeFeedTitleInPost = true,
+                Languages = null,
+                InitializeOnStartUp = false
+            };
 
             IFeedReader feedReader = A.Fake<IFeedReader>();
             A.CallTo( () => feedReader.FeedTitle ).Returns( "1" );
@@ -422,18 +477,19 @@ $@"123456789
                 DefaultLanguages = ["en-ZW"]
             };
 
-            var feedConfig = new FeedConfig(
-                new Uri( "https://shendrick.net/rss.xml" ),
-                "rssbot",
-                "some password",
-                new Uri( "https://at.shendrick.net" ),
-                "0 0 * * * ?",
-                ["234567890", "34567890"], // Should be 20 characters with # and space.
-                5,
-                true,
-                null,
-                false
-            );
+            var feedConfig = new FeedConfig
+            {
+                FeedUrl = new Uri( "https://shendrick.net/rss.xml" ),
+                UserName = "rssbot",
+                Password = "some password",
+                PdsInstanceUrl = new Uri( "https://at.shendrick.net" ),
+                CronString = "0 0 * * * ?",
+                HashTags = ["234567890", "34567890"], // Should be 20 characters with # and space.
+                AlertThreshold = 5,
+                IncludeFeedTitleInPost = true,
+                Languages = null,
+                InitializeOnStartUp = false
+            };
 
             IFeedReader feedReader = A.Fake<IFeedReader>();
             A.CallTo( () => feedReader.FeedTitle ).Returns( "1" );
@@ -473,18 +529,19 @@ $@"123456789
                 DefaultLanguages = ["en-ZW"]
             };
 
-            var feedConfig = new FeedConfig(
-                new Uri( "https://shendrick.net/rss.xml" ),
-                "rssbot",
-                "some password",
-                new Uri( "https://at.shendrick.net" ),
-                "0 0 * * * ?",
-                ["234567890", "34567890"], // Should be 20 characters with # and space.
-                5,
-                true,
-                null,
-                false
-            );
+            var feedConfig = new FeedConfig
+            {
+                FeedUrl = new Uri( "https://shendrick.net/rss.xml" ),
+                UserName = "rssbot",
+                Password = "some password",
+                PdsInstanceUrl = new Uri( "https://at.shendrick.net" ),
+                CronString = "0 0 * * * ?",
+                HashTags = ["234567890", "34567890"], // Should be 20 characters with # and space.
+                AlertThreshold = 5,
+                IncludeFeedTitleInPost = true,
+                Languages = null,
+                InitializeOnStartUp = false
+            };
 
             IFeedReader feedReader = A.Fake<IFeedReader>();
             A.CallTo( () => feedReader.FeedTitle ).Returns( "1" );
@@ -525,18 +582,19 @@ $@"123456789
                 DefaultLanguages = ["en-ZW"]
             };
 
-            var feedConfig = new FeedConfig(
-                new Uri( "https://shendrick.net/rss.xml" ),
-                "rssbot",
-                "some password",
-                new Uri( "https://at.shendrick.net" ),
-                "0 0 * * * ?",
-                ["234567890", "34567890"], // Should be 20 characters with # and space.
-                5,
-                true,
-                null,
-                false
-            );
+            var feedConfig = new FeedConfig
+            {
+                FeedUrl = new Uri( "https://shendrick.net/rss.xml" ),
+                UserName = "rssbot",
+                Password = "some password",
+                PdsInstanceUrl = new Uri( "https://at.shendrick.net" ),
+                CronString = "0 0 * * * ?",
+                HashTags = ["234567890", "34567890"], // Should be 20 characters with # and space.
+                AlertThreshold = 5,
+                IncludeFeedTitleInPost = true,
+                Languages = null,
+                InitializeOnStartUp = false
+            };
 
             IFeedReader feedReader = A.Fake<IFeedReader>();
             A.CallTo( () => feedReader.FeedTitle ).Returns( "1" );

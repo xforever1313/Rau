@@ -49,6 +49,13 @@ namespace Rau.Plugins.Rss2Pds
         /// as described here:
         /// https://www.quartz-scheduler.net/documentation/quartz-3.x/tutorial/crontriggers.html#cron-expressions
         /// </param>
+        /// <param name="languages">
+        /// The languages that we should post in.  If set to null,
+        /// the default behavior is to used, which is to use the feed's language first,
+        /// falling back to the default languages specified in
+        /// <see cref="Standard.Configuration.RauConfig.DefaultLanguages"/> if the feed
+        /// does not specify a language.
+        /// </param>
         /// <param name="hashTags">
         /// Any hash tags you wish to include after the summary of the feed and link
         /// are posted.  Note, the more hash tags, the less of the summary is included
@@ -63,6 +70,25 @@ namespace Rau.Plugins.Rss2Pds
         /// How many failed scrapes in a row must occur before
         /// alerting an admin.  Set to null to not alert (default).
         /// </param>
+        /// <param name="includeFeedTitleInPost">
+        /// If set to true, the title of the feed will be prefixed before the
+        /// item title in the post.  If false, it is not included.
+        /// 
+        /// A use case for setting to true is if an account has multiple RSS
+        /// feeds it mirrors, it can be used to determine which feed it came from.
+        /// </param>
+        /// <param name="initializeOnStartUp">
+        /// If set to true, the initial cache of the feed is downloaded
+        /// when the plugin is initialized.
+        /// 
+        /// If set to false, it means the first time the cron string elapses,
+        /// no posts will be sent to the PDS 
+        /// as the feed cache must be initialzied first.
+        /// 
+        /// A good rule of thumb is to set to true if a startup penality is 
+        /// not a big deal, and the feed isn't updated that often.  Set to false
+        /// if the feed is updated fairly often, or you do not want a startup penalty.
+        /// </param>
         /// <returns>
         /// An ID that is associated with this feed.
         /// Use this to remove the feed.
@@ -75,7 +101,10 @@ namespace Rau.Plugins.Rss2Pds
             string pdsUrl,
             string cronString,
             IEnumerable<string>? hashTags = null,
-            uint? alertThreshold = null
+            uint? alertThreshold = null,
+            bool includeFeedTitleInPost = false,
+            IEnumerable<string>? languages = null,
+            bool initializeOnStartUp = true
         )
         {
             return api.MirrorRssFeed(
@@ -85,7 +114,10 @@ namespace Rau.Plugins.Rss2Pds
                 new Uri( pdsUrl ),
                 cronString,
                 hashTags,
-                alertThreshold
+                alertThreshold,
+                includeFeedTitleInPost,
+                languages,
+                initializeOnStartUp
             );
         }
 
@@ -111,6 +143,13 @@ namespace Rau.Plugins.Rss2Pds
         /// as described here:
         /// https://www.quartz-scheduler.net/documentation/quartz-3.x/tutorial/crontriggers.html#cron-expressions
         /// </param>
+        /// <param name="languages">
+        /// The languages that we should post in.  If set to null,
+        /// the default behavior is to used, which is to use the feed's language first,
+        /// falling back to the default languages specified in
+        /// <see cref="Standard.Configuration.RauConfig.DefaultLanguages"/> if the feed
+        /// does not specify a language.
+        /// </param>
         /// <param name="hashTags">
         /// Any hash tags you wish to include after the summary of the feed and link
         /// are posted.  Note, the more hash tags, the less of the summary is included
@@ -125,6 +164,25 @@ namespace Rau.Plugins.Rss2Pds
         /// How many failed scrapes in a row must occur before
         /// alerting an admin.  Set to null to not alert (default).
         /// </param>
+        /// <param name="includeFeedTitleInPost">
+        /// If set to true, the title of the feed will be prefixed before the
+        /// item title in the post.  If false, it is not included.
+        /// 
+        /// A use case for setting to true is if an account has multiple RSS
+        /// feeds it mirrors, it can be used to determine which feed it came from.
+        /// </param>
+        /// <param name="initializeOnStartUp">
+        /// If set to true, the initial cache of the feed is downloaded
+        /// when the plugin is initialized.
+        /// 
+        /// If set to false, it means the first time the cron string elapses,
+        /// no posts will be sent to the PDS 
+        /// as the feed cache must be initialzied first.
+        /// 
+        /// A good rule of thumb is to set to true if a startup penality is 
+        /// not a big deal, and the feed isn't updated that often.  Set to false
+        /// if the feed is updated fairly often, or you do not want a startup penalty.
+        /// </param>
         /// <returns>
         /// An ID that is associated with this feed.
         /// Use this to remove the feed.
@@ -137,7 +195,10 @@ namespace Rau.Plugins.Rss2Pds
             Uri pdsUrl,
             string cronString,
             IEnumerable<string>? hashTags = null,
-            uint? alertThreshold = null
+            uint? alertThreshold = null,
+            bool includeFeedTitleInPost = false,
+            IEnumerable<string>? languages = null,
+            bool initializeOnStartUp = true
         )
         {
             return api.MirrorRssFeed(
@@ -148,7 +209,10 @@ namespace Rau.Plugins.Rss2Pds
                     pdsUrl,
                     cronString,
                     hashTags,
-                    alertThreshold
+                    alertThreshold,
+                    includeFeedTitleInPost,
+                    languages,
+                    initializeOnStartUp
                 )
             );
         }

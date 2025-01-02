@@ -57,6 +57,7 @@ namespace Rau.Tests.Plugins.Rss2Pds
                 "0 0 * * * ?",
                 [],
                 5,
+                true,
                 null,
                 false
             );
@@ -106,6 +107,7 @@ namespace Rau.Tests.Plugins.Rss2Pds
                 "0 0 * * * ?",
                 [],
                 5,
+                true,
                 null,
                 false
             );
@@ -156,6 +158,7 @@ namespace Rau.Tests.Plugins.Rss2Pds
                 "0 0 * * * ?",
                 [],
                 5,
+                true,
                 null,
                 false
             );
@@ -209,6 +212,7 @@ namespace Rau.Tests.Plugins.Rss2Pds
                 "0 0 * * * ?",
                 ["seth", "xforever1313"],
                 5,
+                true,
                 null,
                 false
             );
@@ -263,6 +267,7 @@ $@"Feed Title: Some Title
                 "0 0 * * * ?",
                 ["1", "2"],
                 5,
+                true,
                 null,
                 false
             );
@@ -315,6 +320,7 @@ $@"1: 1234567890
                 "0 0 * * * ?",
                 ["1", "2"],
                 5,
+                true,
                 null,
                 false
             );
@@ -369,6 +375,7 @@ $@"1234567890
                 "0 0 * * * ?",
                 ["1", "2"],
                 5,
+                true,
                 null,
                 false
             );
@@ -423,6 +430,7 @@ $@"123456789
                 "0 0 * * * ?",
                 ["234567890", "34567890"], // Should be 20 characters with # and space.
                 5,
+                true,
                 null,
                 false
             );
@@ -473,6 +481,7 @@ $@"123456789
                 "0 0 * * * ?",
                 ["234567890", "34567890"], // Should be 20 characters with # and space.
                 5,
+                true,
                 null,
                 false
             );
@@ -524,6 +533,7 @@ $@"123456789
                 "0 0 * * * ?",
                 ["234567890", "34567890"], // Should be 20 characters with # and space.
                 5,
+                true,
                 null,
                 false
             );

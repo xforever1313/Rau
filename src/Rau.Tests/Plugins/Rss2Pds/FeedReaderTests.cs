@@ -201,6 +201,7 @@ namespace Rau.Tests.Plugins.Rss2Pds
                 "0 0 * * * ?",
                 null,
                 null,
+                true,
                 null,
                 true
             );
@@ -238,7 +239,169 @@ namespace Rau.Tests.Plugins.Rss2Pds
             PdsPost post = firstPass[0].GeneratePost( uut, rauConfig );
             AssertEx.ArePdsPostsEqual( expectedPost, post );
         }
-        
+
+        [TestMethod]
+        public void RocLongboardingIgnoreTitleTest()
+        {
+            // Setup
+            const string initialFeed =
+@"<?xml version=""1.0"" encoding=""UTF-8""?>
+<rss version=""2.0"" xmlns:atom=""http://www.w3.org/2005/Atom"">
+<channel>
+    <title>Rochester Longboarding Info | Seth Hendrick</title>
+    <link>https://www.roclongboarding.info</link>
+    <atom:link href=""https://www.roclongboarding.info/rss.xml"" rel=""self"" type=""application/rss+xml"" />
+    <description>Places to Longboard in Rochester, NY</description>
+    <language>en-us</language>
+    <pubDate>Mon, 06 May 2024 11:46:25 +00:00</pubDate>
+    <lastBuildDate>Mon, 06 May 2024 11:46:25 +00:00</lastBuildDate>
+    <item>
+        <title>Lehigh Valley Trail: John Street</title>
+        <link>https://www.roclongboarding.info/Meh Places/2020/09/27/JohnStreet.html</link>
+        <pubDate>Sun, 27 Sep 2020 0:00:00 </pubDate>
+        <author>contact@roclongboarding.info (Seth Hendrick)</author>
+        <guid isPermaLink=""true"">https://www.roclongboarding.info/Meh Places/2020/09/27/JohnStreet.html</guid>
+        <description>Post 1</description>
+    </item>
+    <item>
+        <title>Erie Canal Trail: Between Clinton and Lock 33</title>
+        <link>https://www.roclongboarding.info/Cool Places/2020/09/07/ErieCanalClinton.html</link>
+        <pubDate>Mon, 07 Sep 2020 0:00:00 </pubDate>
+        <author>contact@roclongboarding.info (Seth Hendrick)</author>
+        <guid isPermaLink=""true"">https://www.roclongboarding.info/Cool Places/2020/09/07/ErieCanalClinton.html</guid>
+        <description>Post 2</description>
+    </item>
+  </channel> 
+</rss>
+";
+
+            const string updatedFeed =
+@"<?xml version=""1.0"" encoding=""UTF-8""?>
+<rss version=""2.0"" xmlns:atom=""http://www.w3.org/2005/Atom"">
+<channel>
+    <title>Rochester Longboarding Info | Seth Hendrick</title>
+    <link>https://www.roclongboarding.info</link>
+    <atom:link href=""https://www.roclongboarding.info/rss.xml"" rel=""self"" type=""application/rss+xml"" />
+    <description>Places to Longboard in Rochester, NY</description>
+    <language>en-us</language>
+    <pubDate>Mon, 06 May 2024 11:46:25 +00:00</pubDate>
+    <lastBuildDate>Mon, 06 May 2024 11:46:25 +00:00</lastBuildDate>
+    <item>
+        <title>Lake Ontario State Parkway Trail: Beach Segment</title>
+        <link>https://www.roclongboarding.info/Meh Places/2020/11/14/LakeOntarioStateParkwayTrail.html</link>
+        <pubDate>Sat, 14 Nov 2020 0:00:00 </pubDate>
+        <author>contact@roclongboarding.info (Seth Hendrick)</author>
+        <guid isPermaLink=""true"">https://www.roclongboarding.info/Meh Places/2020/11/14/LakeOntarioStateParkwayTrail.html</guid>
+        <description>Post 0</description>
+    </item>
+    <item>
+        <title>Lehigh Valley Trail: John Street</title>
+        <link>https://www.roclongboarding.info/Meh Places/2020/09/27/JohnStreet.html</link>
+        <pubDate>Sun, 27 Sep 2020 0:00:00 </pubDate>
+        <author>contact@roclongboarding.info (Seth Hendrick)</author>
+        <guid isPermaLink=""true"">https://www.roclongboarding.info/Meh Places/2020/09/27/JohnStreet.html</guid>
+        <description>Post 1</description>
+    </item>
+    <item>
+        <title>Erie Canal Trail: Between Clinton and Lock 33</title>
+        <link>https://www.roclongboarding.info/Cool Places/2020/09/07/ErieCanalClinton.html</link>
+        <pubDate>Mon, 07 Sep 2020 0:00:00 </pubDate>
+        <author>contact@roclongboarding.info (Seth Hendrick)</author>
+        <guid isPermaLink=""true"">https://www.roclongboarding.info/Cool Places/2020/09/07/ErieCanalClinton.html</guid>
+        <description>Post 2</description>
+    </item>
+  </channel> 
+</rss>
+";
+
+            const string missingPost =
+@"<?xml version=""1.0"" encoding=""UTF-8""?>
+<rss version=""2.0"" xmlns:atom=""http://www.w3.org/2005/Atom"">
+<channel>
+    <title>Rochester Longboarding Info | Seth Hendrick</title>
+    <link>https://www.roclongboarding.info</link>
+    <atom:link href=""https://www.roclongboarding.info/rss.xml"" rel=""self"" type=""application/rss+xml"" />
+    <description>Places to Longboard in Rochester, NY</description>
+    <language>en-us</language>
+    <pubDate>Mon, 06 May 2024 11:46:25 +00:00</pubDate>
+    <lastBuildDate>Mon, 06 May 2024 11:46:25 +00:00</lastBuildDate>
+    <item>
+        <title>Lake Ontario State Parkway Trail: Beach Segment</title>
+        <link>https://www.roclongboarding.info/Meh Places/2020/11/14/LakeOntarioStateParkwayTrail.html</link>
+        <pubDate>Sat, 14 Nov 2020 0:00:00 </pubDate>
+        <author>contact@roclongboarding.info (Seth Hendrick)</author>
+        <guid isPermaLink=""true"">https://www.roclongboarding.info/Meh Places/2020/11/14/LakeOntarioStateParkwayTrail.html</guid>
+        <description>Post 0</description>
+    </item>
+    <item>
+        <title>Lehigh Valley Trail: John Street</title>
+        <link>https://www.roclongboarding.info/Meh Places/2020/09/27/JohnStreet.html</link>
+        <pubDate>Sun, 27 Sep 2020 0:00:00 </pubDate>
+        <author>contact@roclongboarding.info (Seth Hendrick)</author>
+        <guid isPermaLink=""true"">https://www.roclongboarding.info/Meh Places/2020/09/27/JohnStreet.html</guid>
+        <description>Post 1</description>
+    </item>
+  </channel> 
+</rss>
+";
+
+            string fileLocation = Path.Combine( testDir.FullName, "RocLongboardingTest.xml" );
+            Uri url = new Uri( SethPath.ToUri( fileLocation ) );
+
+            var rauConfig = new RauConfig( null )
+            {
+                DefaultLanguages = new List<string>() { "en-US" }
+            };
+
+            var config = new FeedConfig(
+                url,
+                "roclongboarding.info",
+                "SomePassword",
+                new Uri( "https://at.shendrick.net" ),
+                "0 0 * * * ?",
+                null,
+                null,
+                false,
+                null,
+                true
+            );
+
+            var uut = new FeedReader( Client, config );
+
+            // Act
+            File.WriteAllText( fileLocation, initialFeed );
+            uut.Initialize();
+
+            File.WriteAllText( fileLocation, updatedFeed );
+            List<SyndicationItem> firstPass = uut.UpdateAsync().Result;
+            List<SyndicationItem> secondPass = uut.UpdateAsync().Result;
+
+            File.WriteAllText( fileLocation, missingPost );
+            List<SyndicationItem> passWithMissingPost = uut.UpdateAsync().Result;
+
+            // Check
+            Assert.AreEqual(
+                "Rochester Longboarding Info | Seth Hendrick",
+                uut.FeedTitle
+            );
+            Assert.AreEqual( "en-us", uut.FeedLanguage );
+
+            Assert.AreEqual( 1, firstPass.Count );
+            Assert.AreEqual( 0, secondPass.Count );
+            Assert.AreEqual( 0, passWithMissingPost.Count );
+
+            var expectedPost = new PdsPost
+            {
+                Languages = ["en-us"],
+                PostAttachmentPage = new Uri( "https://www.roclongboarding.info/Meh Places/2020/11/14/LakeOntarioStateParkwayTrail.html" ),
+
+                // No title prefix should be included in the post.
+                PostContents = "Lake Ontario State Parkway Trail: Beach Segment"
+            };
+            PdsPost post = firstPass[0].GeneratePost( uut, rauConfig );
+            AssertEx.ArePdsPostsEqual( expectedPost, post );
+        }
+
         /// <summary>
         /// Tests an ATOM feed with no language specified.
         /// </summary>
@@ -407,6 +570,7 @@ namespace Rau.Tests.Plugins.Rss2Pds
                 "0 0 * * * ?",
                 null,
                 null,
+                true,
                 ["en-GB"],
                 true
             );
@@ -656,6 +820,7 @@ namespace Rau.Tests.Plugins.Rss2Pds
                 "0 0 * * * ?",
                 null,
                 null,
+                true,
                 ["en-US"],
                 true
             );

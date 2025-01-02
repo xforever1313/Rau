@@ -161,6 +161,7 @@ namespace Rau.Tests.Plugins.Rss2Pds
                 cronString,
                 null,
                 null,
+                true,
                 null,
                 true
             );
@@ -294,6 +295,7 @@ namespace Rau.Tests.Plugins.Rss2Pds
                 "0 0 * * * ?",
                 null,
                 null,
+                true,
                 null,
                 true
             );
@@ -530,6 +532,7 @@ namespace Rau.Tests.Plugins.Rss2Pds
                 "0 0 * * * ?",
                 null,
                 null,
+                true,
                 ["en-GB"],
                 true
             );
@@ -700,6 +703,7 @@ namespace Rau.Tests.Plugins.Rss2Pds
                 "0 0 * * * ?",
                 null,
                 0, // <- No alerts, expect all failures to produce an error message.
+                true,
                 null,
                 true
             );
@@ -850,6 +854,7 @@ namespace Rau.Tests.Plugins.Rss2Pds
                 "0 0 * * * ?",
                 null,
                 1, // <- Allow 1 failure before notifying people.
+                true,
                 null,
                 true
             );

@@ -37,7 +37,15 @@ namespace Rau.Plugins.Rss2Pds
                 url = item.Links.First().Uri;
             }
 
-            string titlePortion = $"{feedReader.FeedTitle}: ";
+            string titlePortion;
+            if( feedReader.FeedConfig.IncludeFeedTitleInPost )
+            {
+                titlePortion = $"{feedReader.FeedTitle}: ";
+            }
+            else
+            {
+                titlePortion = string.Empty;
+            }
 
             var postContents = new StringBuilder();
 

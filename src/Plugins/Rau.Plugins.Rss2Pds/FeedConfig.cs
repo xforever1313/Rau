@@ -27,7 +27,7 @@ namespace Rau.Plugins.Rss2Pds
     /// <param name="FeedUrl">The feed URL.</param>
     /// <param name="Handle">The PDS handle to post RSS messages to.</param>
     /// <param name="Password">The app password to use.</param>
-    /// <param name="pdsInstanceUrl">
+    /// <param name="PdsInstanceUrl">
     /// The instance of the PDS to login to.
     /// </param>
     /// <param name="CronString">How often to check for RSS updates.</param>
@@ -50,6 +50,13 @@ namespace Rau.Plugins.Rss2Pds
     /// How many failed scrapes in a row must happen
     /// before an error message is logged.
     /// </param>
+    /// <param name="IncludeFeedTitleInPost">
+    /// If set to true, the title of the feed will be prefixed before the
+    /// item title in the post.  If false, it is not included.
+    /// 
+    /// A use case for setting to true is if an account has multiple RSS
+    /// feeds it mirrors, it can be used to determine which feed it came from.
+    /// </param>
     /// <param name="InitializeOnStartUp">
     /// If set to true, the initial cache of the feed is downloaded
     /// when the plugin is initialized.
@@ -70,8 +77,9 @@ namespace Rau.Plugins.Rss2Pds
         string CronString,
         IEnumerable<string>? HashTags,
         uint? AlertThreshold,
-        IEnumerable<string>? Languages = null,
-        bool InitializeOnStartUp = true
+        bool IncludeFeedTitleInPost,
+        IEnumerable<string>? Languages,
+        bool InitializeOnStartUp
     );
 
     internal static class FeedConfigExtensions

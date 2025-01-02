@@ -115,6 +115,21 @@ namespace Rau.Configuration
             rau.Configure( config );
         }
 
+        public static void SetDefaultPostLanguage( this IRauConfigurator rau, string language )
+        {
+            rau.SetDefaultPostLanguages( [language] );
+        }
+
+        public static void SetDefaultPostLanguages( this IRauConfigurator rau, IReadOnlyCollection<string> languages )
+        {
+            RauConfig config = rau.Config with
+            {
+                DefaultLanguages = languages
+            };
+
+            rau.Configure( config );
+        }
+
         /// <summary>
         /// Enables Prometheus metrics that can be scraped at the given port.
         /// The port must be greater than 0.

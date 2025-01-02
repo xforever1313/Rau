@@ -25,8 +25,8 @@ namespace Rau.Tests
     {
         // ---------------- Events ----------------
 
-        public event Action<string> StandardOutReceived;
-        public event Action<string> StandardErrorReceived;
+        public event Action<string>? StandardOutReceived;
+        public event Action<string>? StandardErrorReceived;
 
         // ---------------- Fields ----------------
 

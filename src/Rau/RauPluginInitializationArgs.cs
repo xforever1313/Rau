@@ -27,6 +27,6 @@ namespace Rau
         public required DirectoryInfo PersistenceLocation { get; init; }
 
         /// <inheritdoc/>
-        public IRauLogger PluginLogger { get; init; }
+        public required IRauLogger PluginLogger { get; init; }
     }
 }

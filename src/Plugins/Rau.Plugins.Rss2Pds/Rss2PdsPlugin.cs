@@ -57,7 +57,7 @@ namespace Rau.Plugins.Rss2Pds
 
         // ---------------- Properties ----------------
 
-        public string PluginName => "Canary";
+        public string PluginName => "Rss2Pds";
 
         public Version PluginVersion { get; }
 

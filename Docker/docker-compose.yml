@@ -1,0 +1,35 @@
+version: '3.9'
+services:
+rau:
+    container_name: rau
+    build:
+      context: ./rau
+      args:
+        # Options are: x64 or arm64 (case-sensitive).
+        # Pick the option compatible with the host machine running Docker.
+        CPU_ARCH: x64
+
+        # Options are: linux or win (case-sensitive).
+        # Pick the option compatible with the host machine running Docker.
+        OS: linux
+    environment:
+      # I set the timezone to be sure events fire at the correct time.
+      # I'm unsure if this is *needed*, but it doesn't hurt.
+      - TZ=America/New_York
+
+      # You can add any additional Environment Variables you want here.  You should be able
+      # to get access to them in your RauConfig.cs file by invoking C#'s
+      # Environment.GetEnvironmentVariable() method. This way you can have all of your
+      # variables defined all in one spot instead of in multiple files.
+    restart: always
+    volumes:
+      - type: bind
+        # Bind Rau's persistence data so data is maintained between
+        # Rau shutting down and starting up.
+        # This doesn't have to be a bind mount, it could be a volume mount
+        # if you want it to be.
+        source: /data/rau
+        target: /data/
+    ports:
+      # Only needed if exposing the Prometheus metics port.
+      - 9100:9100

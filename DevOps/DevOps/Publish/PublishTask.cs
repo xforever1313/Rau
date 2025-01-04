@@ -28,6 +28,7 @@ namespace DevOps.Publish
 {
     [TaskName( "publish" )]
     [IsDependentOn( typeof( PublishWinX64 ) )]
+    [IsDependentOn( typeof( PublishWinArm64 ) )]
     [IsDependentOn( typeof( PublishLinuxX64 ) )]
     [IsDependentOn( typeof( PublishLinuxArm64 ) )]
     public sealed class PublishTask : DevopsTask
@@ -40,6 +41,14 @@ namespace DevOps.Publish
         // ---------------- Properties ----------------
 
         public override string Rid => "win-x64";
+    }
+
+    [TaskName( "publish_win_arm64" )]
+    public sealed class PublishWinArm64 : BasePublishTask
+    {
+        // ---------------- Properties ----------------
+
+        public override string Rid => "win-arm64";
     }
 
     [TaskName( "publish_linux_x64" )]

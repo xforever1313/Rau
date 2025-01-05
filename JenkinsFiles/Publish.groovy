@@ -42,16 +42,19 @@ pipeline
         }
         stage( "deploy" )
         {
-            withCredentials(
-                [sshUserPrivateKey(
-                    credentialsId: "shendrick.net",
-                    usernameVariable: "SSHUSER",
-                    keyFileVariable: "WEBSITE_KEY" // <- Note: WEBSITE_KEY must be in all quotes below, or rsync won't work if the path has whitespace.
-                )]
-            )
+            steps
             {
-                sh "chmod 700 ./checkout/dist/deploy.sh";
-                sh "./checkout/dist/deploy.sh";
+                withCredentials(
+                    [sshUserPrivateKey(
+                        credentialsId: "shendrick.net",
+                        usernameVariable: "SSHUSER",
+                        keyFileVariable: "WEBSITE_KEY" // <- Note: WEBSITE_KEY must be in all quotes below, or rsync won't work if the path has whitespace.
+                    )]
+                )
+                {
+                    sh "chmod 700 ./checkout/dist/deploy.sh";
+                    sh "./checkout/dist/deploy.sh";
+                }
             }
         }
     }

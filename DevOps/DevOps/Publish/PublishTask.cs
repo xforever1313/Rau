@@ -51,6 +51,14 @@ namespace DevOps.Publish
 
         private string GenerateDeployScript( BuildContext context, string rauVersion )
         {
+            IEnumerable<FilePath> nugetFiles = context.Globber.GetFiles(
+                new GlobPattern( context.DistFolder.CombineWithFilePath( "nuget/*.* " ).FullPath )
+            );
+
+            IEnumerable<FilePath> zipFiles = context.Globber.GetFiles(
+                new GlobPattern( context.DistFolder.CombineWithFilePath( "zip/*.zip " ).FullPath )
+            );
+
             string GetEnvVariable( string variableName )
             {
                 return $"${variableName}";
@@ -70,11 +78,19 @@ namespace DevOps.Publish
             string sshOptions = $"-v -o BatchMode=yes -o StrictHostKeyChecking=accept-new -i \"{GetEnvVariable( "WEBSITE_KEY" )}\"";
             string sshLogin = $"ssh {sshOptions} {GetEnvVariable( "SSHUSER" )}@files.shendrick.net";
 
-            AddCommand( sshLogin + $" mkdir -p {rauVersion}" );
+            AddCommand( sshLogin + $" mkdir -p {releasePath}/{rauVersion}" );
 
-            AddCommand( $"scp {sshOptions} \"{GetEnvVariable( "WORKSPACE" )}/checkout/dist/zip/*.zip\" {GetEnvVariable( "SSHUSER" )}@files.shendrick.net:{releasePath}/{rauVersion}/" );
-            AddCommand( $"scp {sshOptions} \"{GetEnvVariable( "WORKSPACE" )}/checkout/dist/version.txt\" {GetEnvVariable( "SSHUSER" )}@files.shendrick.net:{releasePath}/{rauVersion}/" );
-            AddCommand( $"scp {sshOptions} \"{GetEnvVariable( "WORKSPACE" )}/checkout/dist/nuget/*\" {GetEnvVariable( "SSHUSER" )}@files.shendrick.net:{releasePath}/{rauVersion}/" );
+            AddCommand( $"scp {sshOptions} \"{GetEnvVariable( "WORKSPACE" )}/checkout/dist/version.txt\" {GetEnvVariable( "SSHUSER" )}@files.shendrick.net:{releasePath}/{rauVersion}/version.txt" );
+
+            foreach( FilePath nugetFile in nugetFiles )
+            {
+                AddCommand( $"scp {sshOptions} \"{GetEnvVariable( "WORKSPACE" )}/checkout/dist/nuget/{nugetFile.GetFilename()}\" {GetEnvVariable( "SSHUSER" )}@files.shendrick.net:{releasePath}/{rauVersion}/{nugetFile.GetFilename()}" );
+            }
+
+            foreach( FilePath zipFile in zipFiles )
+            {
+                AddCommand( $"scp {sshOptions} \"{GetEnvVariable( "WORKSPACE" )}/checkout/dist/zip/{zipFile.GetFilename()}\" {GetEnvVariable( "SSHUSER" )}@files.shendrick.net:{releasePath}/{rauVersion}/{zipFile.GetFilename()}" );
+            }
 
             AddCommand( sshLogin + $" \"touch {releasePath}/latest && rm {releasePath}/latest && ln -s {releasePath}/{rauVersion} {releasePath}/latest\"" );
 

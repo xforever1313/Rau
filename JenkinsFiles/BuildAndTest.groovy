@@ -95,6 +95,7 @@ pipeline
                     steps
                     {
                         archiveArtifacts "checkout/dist/zip/*.*";
+                        archiveArtifacts "checkout/dist/version.txt";
                         archiveArtifacts "checkout/dist/nuget/*.*";
                     }
                 }

@@ -16,7 +16,7 @@ RUN mkdir -p /app/ && \
     apt update -y && \
     apt install unzip -y
 
-ADD "http://jenkins.lan.thenaterhood.com/job/Rau/job/Rau_Build/lastSuccessfulBuild/artifact/checkout/dist/zip/Rau_${OS}-${CPU_ARCH}.zip" /tmp/Rau.zip
+ADD "https://files.shendrick.net/projects/rau/releases/latest/Rau_${OS}-${CPU_ARCH}.zip" /tmp/Rau.zip
 
 RUN unzip /tmp/Rau.zip -d /app/ && \
     rm /tmp/Rau.zip && \

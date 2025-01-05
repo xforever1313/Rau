@@ -60,22 +60,23 @@ namespace DevOps.Publish
 
             void AddCommand( string command )
             {
-                builder.Append( $"echo \"{command}\"" );
+                builder.AppendLine( $"echo '{command}'" );
                 builder.AppendLine( command + " || exit 1" );
             }
 
             builder.AppendLine( "#!/bin/bash" );
 
+            string releasePath = $"/home/{GetEnvVariable( "SSHUSER" )}/files.shendrick.net/projects/rau/releases";
             string sshOptions = $"-v -o BatchMode=yes -o StrictHostKeyChecking=accept-new -i \"{GetEnvVariable( "WEBSITE_KEY" )}\"";
-            string sshLogin = $"ssh {sshOptions} {GetEnvVariable( "SSHUSER" )}@files.shendrick.net:files.shendrick.net/projects/rau/releases/";
+            string sshLogin = $"ssh {sshOptions} {GetEnvVariable( "SSHUSER" )}@files.shendrick.net";
 
             AddCommand( sshLogin + $" mkdir -p {rauVersion}" );
 
-            AddCommand( $"scp {sshOptions} \"{GetEnvVariable( "WORKSPACE" )}/checkout/dist/zip/*.zip\" {GetEnvVariable( "SSHUSER" )}@files.shendrick.net:files.shendrick.net/projects/rau/releases/{rauVersion}/" );
-            AddCommand( $"scp {sshOptions} \"{GetEnvVariable( "WORKSPACE" )}/checkout/dist/version.txt\" {GetEnvVariable( "SSHUSER" )}@files.shendrick.net:files.shendrick.net/projects/rau/releases/{rauVersion}/" );
-            AddCommand( $"scp {sshOptions} \"{GetEnvVariable( "WORKSPACE" )}/checkout/dist/nuget/*\" {GetEnvVariable( "SSHUSER" )}@files.shendrick.net:files.shendrick.net/projects/rau/releases/{rauVersion}/" );
+            AddCommand( $"scp {sshOptions} \"{GetEnvVariable( "WORKSPACE" )}/checkout/dist/zip/*.zip\" {GetEnvVariable( "SSHUSER" )}@files.shendrick.net:{releasePath}/{rauVersion}/" );
+            AddCommand( $"scp {sshOptions} \"{GetEnvVariable( "WORKSPACE" )}/checkout/dist/version.txt\" {GetEnvVariable( "SSHUSER" )}@files.shendrick.net:{releasePath}/{rauVersion}/" );
+            AddCommand( $"scp {sshOptions} \"{GetEnvVariable( "WORKSPACE" )}/checkout/dist/nuget/*\" {GetEnvVariable( "SSHUSER" )}@files.shendrick.net:{releasePath}/{rauVersion}/" );
 
-            AddCommand( sshLogin + $" touch ./latest && rm ./latest && ln -s ./{rauVersion} ./latest" );
+            AddCommand( sshLogin + $" \"touch {releasePath}/latest && rm {releasePath}/latest && ln -s {releasePath}/{rauVersion} {releasePath}/latest\"" );
 
             builder.AppendLine( "exit 0" );
 

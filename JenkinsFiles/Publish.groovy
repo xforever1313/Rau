@@ -1,10 +1,5 @@
 @Library( "X13JenkinsLib" )_
 
-def GetRauVersion()
-{
-    return readFile( "checkout/dist/version.txt" );
-}
-
 pipeline
 {
     agent

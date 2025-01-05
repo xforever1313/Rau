@@ -115,6 +115,12 @@ namespace DevOps.Publish
                 context.EnsureDirectoryExists( pluginFolder );
                 publishOptions.OutputDirectory = pluginFolder;
                 context.DotNetPublish( plugin.Path.FullPath, publishOptions );
+
+                FilePath readmeFile = new FilePath( System.IO.Path.Combine( plugin.Path.GetDirectory().FullPath, "Readme.md" ) );
+                if( context.FileExists( readmeFile ) )
+                {
+                    context.CopyFileToDirectory( readmeFile, pluginFolder );
+                }
             }
 
             context.Information( string.Empty );

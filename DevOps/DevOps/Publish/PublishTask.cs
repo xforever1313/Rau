@@ -60,6 +60,7 @@ namespace DevOps.Publish
 
             void AddCommand( string command )
             {
+                builder.Append( $"echo \"{command}\"" );
                 builder.AppendLine( command + " || exit 1" );
             }
 

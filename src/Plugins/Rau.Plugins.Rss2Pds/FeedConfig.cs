@@ -52,7 +52,7 @@ namespace Rau.Plugins.Rss2Pds
         /// Cron string of how often to check the RSS feeds for updates.
         /// 
         /// See https://www.quartz-scheduler.net/documentation/quartz-3.x/tutorial/crontriggers.html#cron-expressions
-        /// for the cront string format.
+        /// for the cron string format.
         /// </summary>
         public required string CronString { get; init; }
 

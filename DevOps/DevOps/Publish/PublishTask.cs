@@ -33,6 +33,14 @@ namespace DevOps.Publish
     [IsDependentOn( typeof( PublishLinuxArm64 ) )]
     public sealed class PublishTask : DevopsTask
     {
+        // ---------------- Methods ----------------
+
+        public override void Run( BuildContext context )
+        {
+            // Output the Rau version.  It will come in handy for deploying.
+            FilePath versionFile = context.DistFolder.CombineWithFilePath( new FilePath( "version.txt" ) );
+            File.WriteAllText( versionFile.FullPath, context.GetRauVersion().ToString( 3 ) );
+        }
     }
 
     [TaskName( "publish_win_x64" )]

@@ -16,6 +16,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
+using System.Xml.Linq;
 using Cake.Common.Solution;
 using Cake.Common.Tools.DotNet.MSBuild;
 using Cake.Core;
@@ -96,6 +97,38 @@ namespace DevOps
             settings.SetMaxCpuCount( System.Environment.ProcessorCount );
 
             return settings;
+        }
+
+        public Version GetRauVersion()
+        {
+            var doc = XDocument.Load( this.ServiceProject.FullPath );
+            foreach( XElement element in doc.Descendants() )
+            {
+                string elementName = element.Name.LocalName;
+                if( string.IsNullOrEmpty( elementName ) )
+                {
+                    continue;
+                }
+                else if( "PropertyGroup" == elementName )
+                {
+                    foreach( XElement propertyGroup in element.Descendants() )
+                    {
+                        string propertyName = propertyGroup.Name.LocalName;
+                        if( string.IsNullOrEmpty( propertyName ) )
+                        {
+                            continue;
+                        }
+                        else if( "Version" == propertyName )
+                        {
+                            return Version.Parse( propertyGroup.Value );
+                        }
+                    }
+                }
+            }
+
+            throw new CakeException(
+                $"Can not find version defined in {this.ServiceProject.FullPath}"
+            );
         }
     }
 }

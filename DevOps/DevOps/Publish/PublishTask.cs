@@ -16,6 +16,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
+using System.Text;
 using Cake.Common.Diagnostics;
 using Cake.Common.IO;
 using Cake.Common.Solution;
@@ -38,8 +39,46 @@ namespace DevOps.Publish
         public override void Run( BuildContext context )
         {
             // Output the Rau version.  It will come in handy for deploying.
+            string version = context.GetRauVersion().ToString( 3 );
             FilePath versionFile = context.DistFolder.CombineWithFilePath( new FilePath( "version.txt" ) );
-            File.WriteAllText( versionFile.FullPath, context.GetRauVersion().ToString( 3 ) );
+            File.WriteAllText( versionFile.FullPath, version );
+
+            File.WriteAllText(
+                context.DistFolder.CombineWithFilePath( new FilePath( "deploy.sh" ) ).FullPath,
+                GenerateDeployScript( context, version )
+            );
+        }
+
+        private string GenerateDeployScript( BuildContext context, string rauVersion )
+        {
+            string GetEnvVariable( string variableName )
+            {
+                return $"${variableName}";
+            }
+
+            var builder = new StringBuilder();
+
+            void AddCommand( string command )
+            {
+                builder.AppendLine( command + " || exit 1" );
+            }
+
+            builder.AppendLine( "#!/bin/bash" );
+
+            string sshOptions = $"-v -o BatchMode=yes -o StrictHostKeyChecking=accept-new -i \"{GetEnvVariable( "WEBSITE_KEY" )}\"";
+            string sshLogin = $"ssh {sshOptions} {GetEnvVariable( "SSHUSER" )}@files.shendrick.net:files.shendrick.net/projects/rau/releases/";
+
+            AddCommand( sshLogin + $" mkdir -p {rauVersion}" );
+
+            AddCommand( $"scp {sshOptions} \"{GetEnvVariable( "WORKSPACE" )}/checkout/dist/zip/*.zip\" {GetEnvVariable( "SSHUSER" )}@files.shendrick.net:files.shendrick.net/projects/rau/releases/{rauVersion}/" );
+            AddCommand( $"scp {sshOptions} \"{GetEnvVariable( "WORKSPACE" )}/checkout/dist/version.txt\" {GetEnvVariable( "SSHUSER" )}@files.shendrick.net:files.shendrick.net/projects/rau/releases/{rauVersion}/" );
+            AddCommand( $"scp {sshOptions} \"{GetEnvVariable( "WORKSPACE" )}/checkout/dist/nuget/*\" {GetEnvVariable( "SSHUSER" )}@files.shendrick.net:files.shendrick.net/projects/rau/releases/{rauVersion}/" );
+
+            AddCommand( sshLogin + $" touch ./latest && rm ./latest && ln -s ./{rauVersion} ./latest" );
+
+            builder.AppendLine( "exit 0" );
+
+            return builder.ToString();
         }
     }
 

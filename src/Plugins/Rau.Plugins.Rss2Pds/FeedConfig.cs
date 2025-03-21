@@ -26,6 +26,12 @@ namespace Rau.Plugins.Rss2Pds
     /// </summary>
     public sealed record class FeedConfig
     {
+        // ---------------- Fields ----------------
+
+        private TimeSpan postDelayTime;
+
+        // ---------------- Properties ----------------
+
         /// <summary>
         /// The URL of the feed to mirror.
         /// </summary>
@@ -103,6 +109,26 @@ namespace Rau.Plugins.Rss2Pds
         /// if the feed is updated fairly often, or you do not want a startup penalty.
         /// </summary>
         public bool InitializeOnStartUp { get; init; } = true;
+
+        /// <summary>
+        /// For a feed, a delay between posts in the event multiple
+        /// updates are needed to go out.
+        /// 
+        /// Can not be negative.
+        /// </summary>
+        public TimeSpan PostDelayTime
+        {
+            get => this.postDelayTime;
+            init
+            {
+                if( value < TimeSpan.Zero )
+                {
+                    throw new ArgumentException( $"{nameof( PostDelayTime )} can not be zero." );
+                }
+
+                this.postDelayTime = value;
+            }
+        }
     }
 
     internal static class FeedConfigExtensions

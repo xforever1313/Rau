@@ -78,11 +78,16 @@ namespace Rau.Plugins.Rss2Pds
                     {
                         PdsPost post = item.GeneratePost( this.feedReader, eventParams.Api.Config );
                         await api.PdsPoster.Post( account, post );
+                        await Task.Delay( this.feedReader.FeedConfig.PostDelayTime, eventParams.CancellationToken );
                     }
                 }
 
                 this.FailedFetches = 0;
                 this.alerted = false;
+            }
+            catch( TaskCanceledException )
+            {
+                return;
             }
             catch( Exception e )
             {

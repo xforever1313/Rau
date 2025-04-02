@@ -97,6 +97,15 @@ namespace Rau.Plugins.Rss2Pds
         public bool IncludeFeedTitleInPost { get; init; } = false;
 
         /// <summary>
+        /// If set to true, there will be an attempt
+        /// to make a card for a URL from the feed entry.  Set to false
+        /// to not attempt.  This will go out and visit
+        /// the URL to try to get the page metadata,
+        /// so set to false if you don't want to visit the URL in the feed.
+        /// </summary>
+        public bool GenerateCardForUrl { get; init; } = true;
+
+        /// <summary>
         /// If set to true, the initial cache of the feed is downloaded
         /// when the plugin is initialized.
         /// 

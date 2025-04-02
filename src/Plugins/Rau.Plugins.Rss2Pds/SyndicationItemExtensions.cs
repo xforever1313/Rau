@@ -97,7 +97,8 @@ namespace Rau.Plugins.Rss2Pds
             {
                 PostAttachmentPage = url,
                 PostContents = postContents.ToString(),
-                Languages = GetLanguages( feedReader, rauConfig )
+                Languages = GetLanguages( feedReader, rauConfig ),
+                GenerateCardForUrl = feedReader.FeedConfig.GenerateCardForUrl
             };
         }
 

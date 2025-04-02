@@ -138,5 +138,14 @@ namespace Rau.Standard
         /// which is defaulted to en-US.
         /// </summary>
         public IEnumerable<string>? Languages { get; init; } = null;
+
+        /// <summary>
+        /// If set to true, there will be an attempt
+        /// to make a card for a URL in the post.  Set to false
+        /// to not attempt.  This will go out and visit
+        /// the URL to try to get the page metadata,
+        /// so set to false if you don't want to visit the URL.
+        /// </summary>
+        public bool GenerateCardForUrl { get; init; } = true;
     }
 }

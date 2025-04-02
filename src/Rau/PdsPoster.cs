@@ -51,20 +51,23 @@ namespace Rau
         public async Task Post( PdsAccount account, PdsPost postContents )
         {
             var client = new BlueskyClient(
-                this.httpClientFactory,
                 account.UserName,
                 account.Password,
-                postContents.Languages ?? this.api.Config.GetDefaultLanguages(),
-                true,
                 account.Instance,
+                this.httpClientFactory,
                 this.msLogger.CreateLogger<BlueskyClient>()
             );
 
-            await client.Post(
-                postContents.PostContents,
-                postContents.PostAttachmentPage,
-                postContents.PostImages?.Select( p => this.ToImage( p ) ) ?? []
-            );
+            var post = new Post
+            {
+                Text = postContents.PostContents,
+                Url = postContents.PostAttachmentPage,
+                Images = postContents.PostImages?.Select( p => this.ToImage( p ) )?.ToArray() ?? [],
+                GenerateCardForUrl = postContents.GenerateCardForUrl,
+                Languages = ( postContents.Languages ?? this.api.Config.GetDefaultLanguages() ).ToArray()
+            };
+
+            await client.Post( post );
         }
 
         private Image ToImage( PostImage postImage )

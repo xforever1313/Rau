@@ -51,6 +51,12 @@ public override void ConfigureBot( IRauApi rau )
             // but note that does mean the first check of the feed will only fill the bot's
             // cache, no messages will go out.
             InitializeOnStartUp = true,
+            // If set to true, there will be an attempt
+            // to make a card for a URL from the feed entry.  Set to false
+            // to not attempt.  This will go out and visit
+            // the URL to try to get the page metadata,
+            // so set to false if you don't want to visit the URL in the feed.
+            GenerateCardForUrl = true,
             // The languages to set the posts to.
             // If left blank, and using an RSS feed, then the RSS feed's language will be used
             // instead.  If left blank and using an ATOM feed (or the language in the feed is not specified),

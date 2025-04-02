@@ -47,7 +47,17 @@ namespace Rau.Plugins.Rss2Pds
                 titlePortion = string.Empty;
             }
 
+            string urlPortion = string.Empty;
+
             var postContents = new StringBuilder();
+
+            if( ( url is not null ) && ( feedReader.FeedConfig.GenerateCardForUrl == false ) )
+            {
+                // If we are not generating a card, we need to include the link
+                // in the message.
+                urlPortion = " " + url.ToString();
+                postContents.Append( urlPortion );
+            }
 
             bool firstHastag = true;
             foreach( string hashTag in feedReader.FeedConfig.HashTags ?? [] )
@@ -72,7 +82,8 @@ namespace Rau.Plugins.Rss2Pds
                 // If there are too many hashtags, clear them out.
                 // The contents of the feed are more important.
                 postContents.Clear();
-                charactersRemaining = rauConfig.CharacterLimit;
+                postContents.Append( urlPortion );
+                charactersRemaining = rauConfig.CharacterLimit - postContents.Length;
             }
             
             if( ( titlePortion.Length + item.Title.Text.Length ) > charactersRemaining )
